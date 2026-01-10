@@ -6,7 +6,8 @@ import {
   Sprout, 
   TrendingUp, 
   Bot,
-  MapPin
+  MapPin,
+  Wheat
 } from 'lucide-react';
 
 const featureCards = [
@@ -49,6 +50,14 @@ const featureCards = [
     path: '/ask-ai',
     gradient: 'from-teal-500 to-green-500',
     bgColor: 'bg-teal-50',
+  },
+  {
+    icon: Wheat,
+    title: 'Crop Recommendation',
+    description: 'Best crops for your land',
+    path: '/crop-recommendation',
+    gradient: 'from-lime-500 to-green-600',
+    bgColor: 'bg-lime-50',
   },
 ];
 
