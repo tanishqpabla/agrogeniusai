@@ -1,11 +1,15 @@
-import { Outlet } from 'react-router-dom';
+import { ReactNode } from 'react';
 import BottomNavigation from './BottomNavigation';
 
-const AppLayout = () => {
+interface AppLayoutProps {
+  children: ReactNode;
+}
+
+const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <div className="min-h-screen bg-background">
       <main className="pb-20">
-        <Outlet />
+        {children}
       </main>
       <BottomNavigation />
     </div>

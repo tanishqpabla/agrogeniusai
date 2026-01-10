@@ -82,7 +82,7 @@ const Home = () => {
           <div>
             <p className="text-primary-foreground/80 text-sm">Welcome back</p>
             <h1 className="text-2xl font-bold text-primary-foreground">
-              Namaste {user?.name?.split(' ')[0]} 🙏
+              Namaste {user?.name} 🙏
             </h1>
             <div className="flex items-center gap-1 mt-1 text-primary-foreground/80">
               <MapPin className="w-3 h-3" />
