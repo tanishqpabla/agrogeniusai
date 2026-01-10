@@ -7,7 +7,8 @@ import {
   TrendingUp, 
   Bot,
   MapPin,
-  Wheat
+  Wheat,
+  Landmark
 } from 'lucide-react';
 
 const featureCards = [
@@ -58,6 +59,14 @@ const featureCards = [
     path: '/crop-recommendation',
     gradient: 'from-lime-500 to-green-600',
     bgColor: 'bg-lime-50',
+  },
+  {
+    icon: Landmark,
+    title: 'Government Schemes',
+    description: 'Subsidies & loan programs',
+    path: '/gov-schemes',
+    gradient: 'from-amber-500 to-orange-500',
+    bgColor: 'bg-amber-50',
   },
 ];
 
