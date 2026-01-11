@@ -8,8 +8,10 @@ import {
   Bot,
   MapPin,
   Wheat,
-  Landmark
+  Landmark,
+  ShoppingBag
 } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 const featureCards = [
   {
@@ -68,6 +70,14 @@ const featureCards = [
     gradient: 'from-amber-500 to-orange-500',
     bgColor: 'bg-amber-50',
   },
+  {
+    icon: ShoppingBag,
+    title: 'Agro Shop',
+    description: 'Seeds, fertilizers & tools',
+    path: '/shop',
+    gradient: 'from-indigo-500 to-purple-600',
+    bgColor: 'bg-indigo-50',
+  },
 ];
 
 const Home = () => {
@@ -89,9 +99,11 @@ const Home = () => {
               <span className="text-xs">{user?.location}</span>
             </div>
           </div>
-          <div className="w-12 h-12 bg-primary-foreground/20 rounded-full flex items-center justify-center">
-            <Leaf className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img 
+            src={logo} 
+            alt="AgroGenius AI Logo" 
+            className="w-14 h-14 rounded-full object-cover shadow-lg"
+          />
         </div>
         
         {/* Quick Stats */}
