@@ -1,10 +1,10 @@
-import { Home, ScanLine, TrendingUp, MessageCircle, User } from 'lucide-react';
+import { Home, ShoppingBag, TrendingUp, MessageCircle, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/home' },
-  { icon: ScanLine, label: 'Scan', path: '/scan' },
+  { icon: ShoppingBag, label: 'Shop', path: '/shop' },
   { icon: TrendingUp, label: 'Market', path: '/market' },
   { icon: MessageCircle, label: 'Ask AI', path: '/ask-ai' },
   { icon: User, label: 'Profile', path: '/profile' },
