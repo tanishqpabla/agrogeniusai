@@ -9,7 +9,8 @@ import {
   MapPin,
   Wheat,
   Landmark,
-  ShoppingBag
+  ShoppingBag,
+  Flame
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
@@ -77,6 +78,14 @@ const featureCards = [
     path: '/shop',
     gradient: 'from-indigo-500 to-purple-600',
     bgColor: 'bg-indigo-50',
+  },
+  {
+    icon: Flame,
+    title: 'Parali Management',
+    description: 'Eco-friendly stubble solutions',
+    path: '/parali',
+    gradient: 'from-red-500 to-orange-500',
+    bgColor: 'bg-red-50',
   },
 ];
 

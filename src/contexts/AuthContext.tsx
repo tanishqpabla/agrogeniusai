@@ -1,20 +1,24 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+type Language = 'en' | 'hi' | 'pa' | 'mr' | 'ta' | 'te' | 'bn';
+
 interface User {
   phone: string;
   name: string;
   location: string;
-  language: 'en' | 'hi';
+  language: Language;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phone: string, name: string, location: string, language: 'en' | 'hi') => void;
+  login: (phone: string, name: string, location: string, language: Language) => void;
   logout: () => void;
   updateProfile: (name: string, location: string) => void;
-  updateLanguage: (language: 'en' | 'hi') => void;
+  updateLanguage: (language: Language) => void;
 }
+
+export type { Language };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -24,7 +28,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (phone: string, name: string, location: string, language: 'en' | 'hi') => {
+  const login = (phone: string, name: string, location: string, language: Language) => {
     const newUser = {
       phone,
       name,
@@ -48,7 +52,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const updateLanguage = (language: 'en' | 'hi') => {
+  const updateLanguage = (language: Language) => {
     if (user) {
       const updatedUser = { ...user, language };
       setUser(updatedUser);

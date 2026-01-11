@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, Language } from '@/contexts/AuthContext';
 import { 
   User, 
   MapPin, 
@@ -12,7 +12,6 @@ import {
   HelpCircle,
   Star,
   Pencil,
-  X,
   Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,6 +26,178 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+const languages: { code: Language; label: string }[] = [
+  { code: 'en', label: 'English' },
+  { code: 'hi', label: 'हिंदी' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ' },
+  { code: 'mr', label: 'मराठी' },
+  { code: 'ta', label: 'தமிழ்' },
+  { code: 'te', label: 'తెలుగు' },
+  { code: 'bn', label: 'বাংলা' },
+];
+
+const translations: Record<Language, {
+  myProfile: string;
+  manageAccount: string;
+  notifications: string;
+  language: string;
+  privacyPolicy: string;
+  helpSupport: string;
+  rateApp: string;
+  logout: string;
+  scansDone: string;
+  aiQueries: string;
+  orders: string;
+  madeWith: string;
+  editProfile: string;
+  save: string;
+  cancel: string;
+  name: string;
+  location: string;
+  selectLanguage: string;
+}> = {
+  en: {
+    myProfile: 'My Profile',
+    manageAccount: 'Manage your account',
+    notifications: 'Notifications',
+    language: 'Language',
+    privacyPolicy: 'Privacy Policy',
+    helpSupport: 'Help & Support',
+    rateApp: 'Rate App',
+    logout: 'Logout',
+    scansDone: 'Scans Done',
+    aiQueries: 'AI Queries',
+    orders: 'Orders',
+    madeWith: 'Made with ❤️ for Indian Farmers',
+    editProfile: 'Edit Profile',
+    save: 'Save',
+    cancel: 'Cancel',
+    name: 'Name',
+    location: 'Location',
+    selectLanguage: 'Select Language',
+  },
+  hi: {
+    myProfile: 'मेरी प्रोफ़ाइल',
+    manageAccount: 'अपना खाता प्रबंधित करें',
+    notifications: 'सूचनाएं',
+    language: 'भाषा',
+    privacyPolicy: 'गोपनीयता नीति',
+    helpSupport: 'सहायता और समर्थन',
+    rateApp: 'ऐप रेट करें',
+    logout: 'लॉग आउट',
+    scansDone: 'स्कैन किए गए',
+    aiQueries: 'AI प्रश्न',
+    orders: 'ऑर्डर',
+    madeWith: '❤️ भारतीय किसानों के लिए बनाया गया',
+    editProfile: 'प्रोफ़ाइल संपादित करें',
+    save: 'सहेजें',
+    cancel: 'रद्द करें',
+    name: 'नाम',
+    location: 'स्थान',
+    selectLanguage: 'भाषा चुनें',
+  },
+  pa: {
+    myProfile: 'ਮੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ',
+    manageAccount: 'ਆਪਣਾ ਖਾਤਾ ਪ੍ਰਬੰਧਿਤ ਕਰੋ',
+    notifications: 'ਸੂਚਨਾਵਾਂ',
+    language: 'ਭਾਸ਼ਾ',
+    privacyPolicy: 'ਗੋਪਨੀਯਤਾ ਨੀਤੀ',
+    helpSupport: 'ਸਹਾਇਤਾ',
+    rateApp: 'ਐਪ ਰੇਟ ਕਰੋ',
+    logout: 'ਲੌਗ ਆਉਟ',
+    scansDone: 'ਸਕੈਨ ਕੀਤੇ',
+    aiQueries: 'AI ਸਵਾਲ',
+    orders: 'ਆਰਡਰ',
+    madeWith: '❤️ ਭਾਰਤੀ ਕਿਸਾਨਾਂ ਲਈ ਬਣਾਇਆ',
+    editProfile: 'ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ',
+    save: 'ਸੁਰੱਖਿਅਤ ਕਰੋ',
+    cancel: 'ਰੱਦ ਕਰੋ',
+    name: 'ਨਾਮ',
+    location: 'ਸਥਾਨ',
+    selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ',
+  },
+  mr: {
+    myProfile: 'माझी प्रोफाइल',
+    manageAccount: 'तुमचे खाते व्यवस्थापित करा',
+    notifications: 'सूचना',
+    language: 'भाषा',
+    privacyPolicy: 'गोपनीयता धोरण',
+    helpSupport: 'मदत आणि समर्थन',
+    rateApp: 'ॲप रेट करा',
+    logout: 'लॉग आउट',
+    scansDone: 'स्कॅन केले',
+    aiQueries: 'AI प्रश्न',
+    orders: 'ऑर्डर',
+    madeWith: '❤️ भारतीय शेतकऱ्यांसाठी बनवले',
+    editProfile: 'प्रोफाइल संपादित करा',
+    save: 'जतन करा',
+    cancel: 'रद्द करा',
+    name: 'नाव',
+    location: 'स्थान',
+    selectLanguage: 'भाषा निवडा',
+  },
+  ta: {
+    myProfile: 'என் சுயவிவரம்',
+    manageAccount: 'உங்கள் கணக்கை நிர்வகிக்கவும்',
+    notifications: 'அறிவிப்புகள்',
+    language: 'மொழி',
+    privacyPolicy: 'தனியுரிமை கொள்கை',
+    helpSupport: 'உதவி மற்றும் ஆதரவு',
+    rateApp: 'ஆப்பை மதிப்பிடு',
+    logout: 'வெளியேறு',
+    scansDone: 'ஸ்கேன்கள்',
+    aiQueries: 'AI கேள்விகள்',
+    orders: 'ஆர்டர்கள்',
+    madeWith: '❤️ இந்திய விவசாயிகளுக்காக உருவாக்கப்பட்டது',
+    editProfile: 'சுயவிவரத்தை திருத்து',
+    save: 'சேமி',
+    cancel: 'ரத்து செய்',
+    name: 'பெயர்',
+    location: 'இடம்',
+    selectLanguage: 'மொழியைத் தேர்ந்தெடுக்கவும்',
+  },
+  te: {
+    myProfile: 'నా ప్రొఫైల్',
+    manageAccount: 'మీ ఖాతాను నిర్వహించండి',
+    notifications: 'నోటిఫికేషన్లు',
+    language: 'భాష',
+    privacyPolicy: 'గోప్యతా విధానం',
+    helpSupport: 'సహాయం మరియు మద్దతు',
+    rateApp: 'యాప్ రేట్ చేయండి',
+    logout: 'లాగ్ అవుట్',
+    scansDone: 'స్కాన్‌లు',
+    aiQueries: 'AI ప్రశ్నలు',
+    orders: 'ఆర్డర్‌లు',
+    madeWith: '❤️ భారతీయ రైతుల కోసం తయారు చేయబడింది',
+    editProfile: 'ప్రొఫైల్ సవరించండి',
+    save: 'సేవ్ చేయండి',
+    cancel: 'రద్దు చేయండి',
+    name: 'పేరు',
+    location: 'ప్రదేశం',
+    selectLanguage: 'భాషను ఎంచుకోండి',
+  },
+  bn: {
+    myProfile: 'আমার প্রোফাইল',
+    manageAccount: 'আপনার অ্যাকাউন্ট পরিচালনা করুন',
+    notifications: 'বিজ্ঞপ্তি',
+    language: 'ভাষা',
+    privacyPolicy: 'গোপনীয়তা নীতি',
+    helpSupport: 'সাহায্য ও সমর্থন',
+    rateApp: 'অ্যাপ রেট করুন',
+    logout: 'লগ আউট',
+    scansDone: 'স্ক্যান',
+    aiQueries: 'AI প্রশ্ন',
+    orders: 'অর্ডার',
+    madeWith: '❤️ ভারতীয় কৃষকদের জন্য তৈরি',
+    editProfile: 'প্রোফাইল সম্পাদনা করুন',
+    save: 'সংরক্ষণ করুন',
+    cancel: 'বাতিল করুন',
+    name: 'নাম',
+    location: 'অবস্থান',
+    selectLanguage: 'ভাষা নির্বাচন করুন',
+  },
+};
+
 const Profile = () => {
   const navigate = useNavigate();
   const { user, logout, updateProfile, updateLanguage } = useAuth();
@@ -36,55 +207,9 @@ const Profile = () => {
   const [editName, setEditName] = useState(user?.name || '');
   const [editLocation, setEditLocation] = useState(user?.location || '');
 
-  const t = {
-    en: {
-      myProfile: 'My Profile',
-      manageAccount: 'Manage your account',
-      notifications: 'Notifications',
-      language: 'Language',
-      privacyPolicy: 'Privacy Policy',
-      helpSupport: 'Help & Support',
-      rateApp: 'Rate App',
-      logout: 'Logout',
-      scansDone: 'Scans Done',
-      aiQueries: 'AI Queries',
-      orders: 'Orders',
-      madeWith: 'Made with ❤️ for Indian Farmers',
-      editProfile: 'Edit Profile',
-      save: 'Save',
-      cancel: 'Cancel',
-      name: 'Name',
-      location: 'Location',
-      selectLanguage: 'Select Language',
-      english: 'English',
-      hindi: 'हिंदी',
-    },
-    hi: {
-      myProfile: 'मेरी प्रोफ़ाइल',
-      manageAccount: 'अपना खाता प्रबंधित करें',
-      notifications: 'सूचनाएं',
-      language: 'भाषा',
-      privacyPolicy: 'गोपनीयता नीति',
-      helpSupport: 'सहायता और समर्थन',
-      rateApp: 'ऐप रेट करें',
-      logout: 'लॉग आउट',
-      scansDone: 'स्कैन किए गए',
-      aiQueries: 'AI प्रश्न',
-      orders: 'ऑर्डर',
-      madeWith: '❤️ भारतीय किसानों के लिए बनाया गया',
-      editProfile: 'प्रोफ़ाइल संपादित करें',
-      save: 'सहेजें',
-      cancel: 'रद्द करें',
-      name: 'नाम',
-      location: 'स्थान',
-      selectLanguage: 'भाषा चुनें',
-      english: 'English',
-      hindi: 'हिंदी',
-    },
-  };
-
   const currentLang = user?.language || 'en';
-  const text = t[currentLang];
+  const text = translations[currentLang];
+  const currentLangLabel = languages.find(l => l.code === currentLang)?.label || 'English';
 
   const handleLogout = () => {
     logout();
@@ -98,14 +223,14 @@ const Profile = () => {
     }
   };
 
-  const handleLanguageChange = (lang: 'en' | 'hi') => {
+  const handleLanguageChange = (lang: Language) => {
     updateLanguage(lang);
     setIsLanguageDialogOpen(false);
   };
 
   const menuItems = [
     { icon: Bell, label: text.notifications, action: 'toggle', value: notifications, onChange: setNotifications },
-    { icon: Globe, label: text.language, value: currentLang === 'en' ? 'English' : 'हिंदी', action: 'language' },
+    { icon: Globe, label: text.language, value: currentLangLabel, action: 'language' },
     { icon: Shield, label: text.privacyPolicy, action: 'navigate' },
     { icon: HelpCircle, label: text.helpSupport, action: 'navigate' },
     { icon: Star, label: text.rateApp, action: 'navigate' },
@@ -287,31 +412,22 @@ const Profile = () => {
           <DialogHeader>
             <DialogTitle>{text.selectLanguage}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-2 mt-4">
-            <button
-              onClick={() => handleLanguageChange('en')}
-              className={cn(
-                'w-full p-4 rounded-xl flex items-center justify-between border transition-colors',
-                currentLang === 'en' 
-                  ? 'bg-primary/10 border-primary' 
-                  : 'hover:bg-muted'
-              )}
-            >
-              <span className="font-medium">{text.english}</span>
-              {currentLang === 'en' && <Check className="w-5 h-5 text-primary" />}
-            </button>
-            <button
-              onClick={() => handleLanguageChange('hi')}
-              className={cn(
-                'w-full p-4 rounded-xl flex items-center justify-between border transition-colors',
-                currentLang === 'hi' 
-                  ? 'bg-primary/10 border-primary' 
-                  : 'hover:bg-muted'
-              )}
-            >
-              <span className="font-medium">{text.hindi}</span>
-              {currentLang === 'hi' && <Check className="w-5 h-5 text-primary" />}
-            </button>
+          <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={cn(
+                  'w-full p-4 rounded-xl flex items-center justify-between border transition-colors',
+                  currentLang === lang.code 
+                    ? 'bg-primary/10 border-primary' 
+                    : 'hover:bg-muted'
+                )}
+              >
+                <span className="font-medium">{lang.label}</span>
+                {currentLang === lang.code && <Check className="w-5 h-5 text-primary" />}
+              </button>
+            ))}
           </div>
         </DialogContent>
       </Dialog>

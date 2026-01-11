@@ -15,6 +15,7 @@ import Market from "./pages/Market";
 import Shop from "./pages/Shop";
 import AskAI from "./pages/AskAI";
 import Profile from "./pages/Profile";
+import ParaliManagement from "./pages/ParaliManagement";
 import NotFound from "./pages/NotFound";
 import AppLayout from "./components/AppLayout";
 
@@ -56,6 +57,7 @@ const AppRoutes = () => (
     <Route path="/soil" element={<ProtectedRoute><SoilHealth /></ProtectedRoute>} />
     <Route path="/crop-recommendation" element={<ProtectedRoute><CropRecommendation /></ProtectedRoute>} />
     <Route path="/gov-schemes" element={<ProtectedRoute><GovSchemes /></ProtectedRoute>} />
+    <Route path="/parali" element={<ProtectedRoute><ParaliManagement /></ProtectedRoute>} />
     
     {/* Catch-all */}
     <Route path="*" element={<NotFound />} />
