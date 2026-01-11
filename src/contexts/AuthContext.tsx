@@ -4,13 +4,16 @@ interface User {
   phone: string;
   name: string;
   location: string;
+  language: 'en' | 'hi';
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phone: string, name: string, location: string) => void;
+  login: (phone: string, name: string, location: string, language: 'en' | 'hi') => void;
   logout: () => void;
+  updateProfile: (name: string, location: string) => void;
+  updateLanguage: (language: 'en' | 'hi') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,11 +24,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (phone: string, name: string, location: string) => {
+  const login = (phone: string, name: string, location: string, language: 'en' | 'hi') => {
     const newUser = {
       phone,
       name,
       location,
+      language,
     };
     setUser(newUser);
     localStorage.setItem('agrogenius_user', JSON.stringify(newUser));
@@ -36,8 +40,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('agrogenius_user');
   };
 
+  const updateProfile = (name: string, location: string) => {
+    if (user) {
+      const updatedUser = { ...user, name, location };
+      setUser(updatedUser);
+      localStorage.setItem('agrogenius_user', JSON.stringify(updatedUser));
+    }
+  };
+
+  const updateLanguage = (language: 'en' | 'hi') => {
+    if (user) {
+      const updatedUser = { ...user, language };
+      setUser(updatedUser);
+      localStorage.setItem('agrogenius_user', JSON.stringify(updatedUser));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, updateProfile, updateLanguage }}>
       {children}
     </AuthContext.Provider>
   );
