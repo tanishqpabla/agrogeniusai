@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
+import { ArrowLeft, Send, Bot, User, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { VoiceInput } from '@/components/VoiceInput';
+import { useTranslation } from '@/hooks/useTranslation';
+import { Language } from '@/contexts/AuthContext';
 
 interface Message {
   id: string;
@@ -11,12 +14,106 @@ interface Message {
   timestamp: Date;
 }
 
-const suggestedQuestions = [
-  'How to control aphids in wheat?',
-  'Best time to sow mustard?',
-  'Why are my tomato leaves turning yellow?',
-  'How to increase milk production in cows?',
-];
+const pageTranslations: Record<Language, {
+  title: string;
+  subtitle: string;
+  greeting: string;
+  askAnything: string;
+  tryAsking: string;
+  questions: string[];
+}> = {
+  en: {
+    title: 'Agro AI Assistant',
+    subtitle: 'Powered by AI • Ask anything',
+    greeting: 'Hello, Farmer! 🙏',
+    askAnything: 'Ask me anything about farming, crops, pests, or animal care',
+    tryAsking: 'Try asking:',
+    questions: [
+      'How to control aphids in wheat?',
+      'Best time to sow mustard?',
+      'Why are my tomato leaves turning yellow?',
+      'How to increase milk production in cows?',
+    ],
+  },
+  hi: {
+    title: 'एग्रो AI सहायक',
+    subtitle: 'AI संचालित • कुछ भी पूछें',
+    greeting: 'नमस्ते, किसान! 🙏',
+    askAnything: 'खेती, फसल, कीट या पशु देखभाल के बारे में कुछ भी पूछें',
+    tryAsking: 'ये पूछकर देखें:',
+    questions: [
+      'गेहूं में माहू कैसे नियंत्रित करें?',
+      'सरसों बोने का सबसे अच्छा समय?',
+      'मेरे टमाटर की पत्तियां पीली क्यों हो रही हैं?',
+      'गायों में दूध उत्पादन कैसे बढ़ाएं?',
+    ],
+  },
+  pa: {
+    title: 'ਐਗਰੋ AI ਸਹਾਇਕ',
+    subtitle: 'AI ਦੁਆਰਾ ਸੰਚਾਲਿਤ • ਕੁਝ ਵੀ ਪੁੱਛੋ',
+    greeting: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ, ਕਿਸਾਨ! 🙏',
+    askAnything: 'ਖੇਤੀ, ਫਸਲ, ਕੀੜੇ ਜਾਂ ਪਸ਼ੂ ਦੇਖਭਾਲ ਬਾਰੇ ਕੁਝ ਵੀ ਪੁੱਛੋ',
+    tryAsking: 'ਇਹ ਪੁੱਛ ਕੇ ਦੇਖੋ:',
+    questions: [
+      'ਕਣਕ ਵਿੱਚ ਤੇਲੇ ਨੂੰ ਕਿਵੇਂ ਕੰਟਰੋਲ ਕਰੀਏ?',
+      'ਸਰ੍ਹੋਂ ਬੀਜਣ ਦਾ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ?',
+      'ਮੇਰੇ ਟਮਾਟਰ ਦੇ ਪੱਤੇ ਪੀਲੇ ਕਿਉਂ ਹੋ ਰਹੇ ਹਨ?',
+      'ਗਾਵਾਂ ਵਿੱਚ ਦੁੱਧ ਦਾ ਉਤਪਾਦਨ ਕਿਵੇਂ ਵਧਾਈਏ?',
+    ],
+  },
+  mr: {
+    title: 'ॲग्रो AI सहाय्यक',
+    subtitle: 'AI द्वारे संचालित • काहीही विचारा',
+    greeting: 'नमस्कार, शेतकरी! 🙏',
+    askAnything: 'शेती, पीक, कीटक किंवा प्राणी काळजी बद्दल काहीही विचारा',
+    tryAsking: 'हे विचारून पहा:',
+    questions: [
+      'गव्हातील मावा कसा नियंत्रित करावा?',
+      'मोहरी पेरण्याची सर्वोत्तम वेळ?',
+      'माझ्या टोमॅटोची पाने पिवळी का होत आहेत?',
+      'गायींमध्ये दूध उत्पादन कसे वाढवावे?',
+    ],
+  },
+  ta: {
+    title: 'அக்ரோ AI உதவியாளர்',
+    subtitle: 'AI இயக்கம் • எதையும் கேளுங்கள்',
+    greeting: 'வணக்கம், விவசாயி! 🙏',
+    askAnything: 'விவசாயம், பயிர், பூச்சி அல்லது கால்நடை பராமரிப்பு பற்றி கேளுங்கள்',
+    tryAsking: 'இவற்றைக் கேளுங்கள்:',
+    questions: [
+      'கோதுமையில் அப்ஃபிட்ஸை எப்படி கட்டுப்படுத்துவது?',
+      'கடுகு விதைக்க சிறந்த நேரம்?',
+      'என் தக்காளி இலைகள் ஏன் மஞ்சளாகின்றன?',
+      'பசுக்களில் பால் உற்பத்தியை எப்படி அதிகரிப்பது?',
+    ],
+  },
+  te: {
+    title: 'అగ్రో AI సహాయకుడు',
+    subtitle: 'AI ద్వారా నడుస్తుంది • ఏదైనా అడగండి',
+    greeting: 'నమస్కారం, రైతు! 🙏',
+    askAnything: 'వ్యవసాయం, పంటలు, పురుగులు లేదా పశువుల సంరక్షణ గురించి ఏదైనా అడగండి',
+    tryAsking: 'ఇవి అడగండి:',
+    questions: [
+      'గోధుమలో ఆఫిడ్స్‌ని ఎలా నియంత్రించాలి?',
+      'ఆవాలు విత్తడానికి ఉత్తమ సమయం?',
+      'నా టమాటా ఆకులు ఎందుకు పసుపు రంగులో మారుతున్నాయి?',
+      'ఆవులలో పాల ఉత్పత్తిని ఎలా పెంచాలి?',
+    ],
+  },
+  bn: {
+    title: 'অ্যাগ্রো AI সহকারী',
+    subtitle: 'AI দ্বারা চালিত • যেকোনো কিছু জিজ্ঞাসা করুন',
+    greeting: 'নমস্কার, কৃষক! 🙏',
+    askAnything: 'কৃষি, ফসল, পোকা বা পশু পালন সম্পর্কে যেকোনো কিছু জিজ্ঞাসা করুন',
+    tryAsking: 'এগুলো জিজ্ঞাসা করুন:',
+    questions: [
+      'গমে জাব কীভাবে নিয়ন্ত্রণ করবেন?',
+      'সরষে বপনের সেরা সময়?',
+      'আমার টমেটোর পাতা হলুদ হচ্ছে কেন?',
+      'গাভীতে দুধ উৎপাদন কীভাবে বাড়াবেন?',
+    ],
+  },
+};
 
 // Mock AI responses
 const mockResponses: Record<string, string> = {
@@ -108,16 +205,16 @@ Following these practices can increase milk by 15-20% within 2-3 weeks.
 const getAIResponse = (query: string): string => {
   const lowerQuery = query.toLowerCase();
   
-  if (lowerQuery.includes('aphid') || lowerQuery.includes('pest') || lowerQuery.includes('insect')) {
+  if (lowerQuery.includes('aphid') || lowerQuery.includes('pest') || lowerQuery.includes('insect') || lowerQuery.includes('माहू') || lowerQuery.includes('कीट')) {
     return mockResponses['aphids'];
   }
-  if (lowerQuery.includes('mustard') || lowerQuery.includes('sow') || lowerQuery.includes('sarson')) {
+  if (lowerQuery.includes('mustard') || lowerQuery.includes('sow') || lowerQuery.includes('sarson') || lowerQuery.includes('सरसों') || lowerQuery.includes('बोने')) {
     return mockResponses['mustard'];
   }
-  if (lowerQuery.includes('yellow') || lowerQuery.includes('tomato') || lowerQuery.includes('leaf')) {
+  if (lowerQuery.includes('yellow') || lowerQuery.includes('tomato') || lowerQuery.includes('leaf') || lowerQuery.includes('पीली') || lowerQuery.includes('टमाटर')) {
     return mockResponses['yellow'];
   }
-  if (lowerQuery.includes('milk') || lowerQuery.includes('cow') || lowerQuery.includes('buffalo') || lowerQuery.includes('dairy')) {
+  if (lowerQuery.includes('milk') || lowerQuery.includes('cow') || lowerQuery.includes('buffalo') || lowerQuery.includes('dairy') || lowerQuery.includes('दूध') || lowerQuery.includes('गाय')) {
     return mockResponses['milk'];
   }
   
@@ -142,9 +239,11 @@ How else can I help you today?`;
 
 const AskAI = () => {
   const navigate = useNavigate();
+  const { t, lang } = useTranslation();
+  const text = pageTranslations[lang] || pageTranslations.en;
+  
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isListening, setIsListening] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -156,13 +255,13 @@ const AskAI = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async (text: string = input) => {
-    if (!text.trim()) return;
+  const handleSend = async (textToSend: string = input) => {
+    if (!textToSend.trim()) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: text.trim(),
+      content: textToSend.trim(),
       timestamp: new Date(),
     };
 
@@ -175,7 +274,7 @@ const AskAI = () => {
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: getAIResponse(text),
+        content: getAIResponse(textToSend),
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, aiResponse]);
@@ -183,37 +282,10 @@ const AskAI = () => {
     }, 1500);
   };
 
-  const toggleVoice = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Voice input is not supported in your browser. Please try Chrome.');
-      return;
-    }
-
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    
-    recognition.lang = 'en-IN';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    if (!isListening) {
-      setIsListening(true);
-      recognition.start();
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInput(transcript);
-        setIsListening(false);
-      };
-
-      recognition.onerror = () => {
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-    }
+  const handleVoiceTranscript = (transcript: string) => {
+    setInput(transcript);
+    // Optionally auto-send after voice input
+    // handleSend(transcript);
   };
 
   return (
@@ -228,8 +300,8 @@ const AskAI = () => {
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">Agro AI Assistant</h1>
-            <p className="text-white/80 text-xs">Powered by AI • Ask anything</p>
+            <h1 className="text-lg font-bold text-white">{text.title}</h1>
+            <p className="text-white/80 text-xs">{text.subtitle}</p>
           </div>
         </div>
       </div>
@@ -241,15 +313,15 @@ const AskAI = () => {
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-10 h-10 text-primary" />
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">Hello, Farmer! 🙏</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-2">{text.greeting}</h2>
             <p className="text-muted-foreground mb-6">
-              Ask me anything about farming, crops, pests, or animal care
+              {text.askAnything}
             </p>
             
             {/* Suggested Questions */}
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground mb-3">Try asking:</p>
-              {suggestedQuestions.map((q, index) => (
+              <p className="text-sm text-muted-foreground mb-3">{text.tryAsking}</p>
+              {text.questions.map((q, index) => (
                 <button
                   key={index}
                   onClick={() => handleSend(q)}
@@ -317,22 +389,14 @@ const AskAI = () => {
       {/* Input Area */}
       <div className="fixed bottom-20 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
         <div className="max-w-lg mx-auto flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className={`rounded-xl h-12 w-12 flex-shrink-0 ${isListening ? 'bg-red-100 border-red-300' : ''}`}
-            onClick={toggleVoice}
-          >
-            {isListening ? (
-              <MicOff className="w-5 h-5 text-red-500" />
-            ) : (
-              <Mic className="w-5 h-5" />
-            )}
-          </Button>
+          <VoiceInput 
+            onTranscript={handleVoiceTranscript}
+            size="lg"
+          />
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your farming question..."
+            placeholder={t.typeQuestion}
             className="h-12 rounded-xl"
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
@@ -345,11 +409,6 @@ const AskAI = () => {
             <Send className="w-5 h-5" />
           </Button>
         </div>
-        {isListening && (
-          <p className="text-center text-sm text-red-500 mt-2 animate-pulse">
-            🎤 Listening... Speak now
-          </p>
-        )}
       </div>
     </div>
   );
