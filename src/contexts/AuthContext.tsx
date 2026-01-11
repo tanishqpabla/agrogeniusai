@@ -9,7 +9,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phone: string) => void;
+  login: (phone: string, name: string, location: string) => void;
   logout: () => void;
 }
 
@@ -21,11 +21,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (phone: string) => {
+  const login = (phone: string, name: string, location: string) => {
     const newUser = {
       phone,
-      name: 'Rahul Sharma',
-      location: 'Hisar, Haryana',
+      name,
+      location,
     };
     setUser(newUser);
     localStorage.setItem('agrogenius_user', JSON.stringify(newUser));

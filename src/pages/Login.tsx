@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Leaf, Phone, ArrowRight } from 'lucide-react';
+import { Leaf, Phone, ArrowRight, User, MapPin } from 'lucide-react';
 
 const Login = () => {
   const [phone, setPhone] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [location, setLocation] = useState('');
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
@@ -14,17 +16,25 @@ const Login = () => {
   const { login } = useAuth();
 
   const handleSendOtp = () => {
-    if (phone.length === 10) {
-      setShowOtp(true);
-      setError('');
-    } else {
+    if (phone.length !== 10) {
       setError('Please enter a valid 10-digit phone number');
+      return;
     }
+    if (!fullName.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+    if (!location.trim()) {
+      setError('Please enter your location');
+      return;
+    }
+    setShowOtp(true);
+    setError('');
   };
 
   const handleVerifyOtp = () => {
     if (otp === '1234') {
-      login(phone);
+      login(phone, fullName.trim(), location.trim());
       navigate('/home');
     } else {
       setError('Invalid OTP. Use 1234 for demo.');
@@ -52,6 +62,22 @@ const Login = () => {
 
         {!showOtp ? (
           <div className="space-y-4">
+            {/* Full Name Input */}
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
+                <User className="w-5 h-5" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Enter full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="pl-12 h-14 text-lg rounded-xl"
+                maxLength={50}
+              />
+            </div>
+
+            {/* Phone Number Input */}
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground">
                 <Phone className="w-5 h-5" />
@@ -66,11 +92,27 @@ const Login = () => {
                 maxLength={10}
               />
             </div>
+
+            {/* Location Input */}
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <Input
+                type="text"
+                placeholder="Enter location (e.g., Noida)"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="pl-12 h-14 text-lg rounded-xl"
+                maxLength={50}
+              />
+            </div>
+
             {error && <p className="text-destructive text-sm">{error}</p>}
             <Button 
               onClick={handleSendOtp} 
               className="w-full h-14 text-lg rounded-xl gap-2"
-              disabled={phone.length !== 10}
+              disabled={phone.length !== 10 || !fullName.trim() || !location.trim()}
             >
               Send OTP
               <ArrowRight className="w-5 h-5" />
@@ -105,7 +147,7 @@ const Login = () => {
               onClick={() => { setShowOtp(false); setOtp(''); setError(''); }}
               className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Change phone number
+              Change details
             </button>
           </div>
         )}
