@@ -233,9 +233,9 @@ const Profile = () => {
   const menuItems = [
     { icon: Bell, label: text.notifications, action: 'toggle', value: notifications, onChange: setNotifications },
     { icon: Globe, label: text.language, value: currentLangLabel, action: 'language' },
-    { icon: Shield, label: text.privacyPolicy, action: 'navigate' },
-    { icon: HelpCircle, label: text.helpSupport, action: 'navigate' },
-    { icon: Star, label: text.rateApp, action: 'navigate' },
+    { icon: Shield, label: text.privacyPolicy, action: 'launching-soon' },
+    { icon: HelpCircle, label: text.helpSupport, action: 'launching-soon' },
+    { icon: Star, label: text.rateApp, action: 'launching-soon' },
   ];
 
   return (
@@ -292,6 +292,8 @@ const Profile = () => {
                 onClick={() => {
                   if (item.action === 'language') {
                     setIsLanguageDialogOpen(true);
+                  } else if (item.action === 'launching-soon') {
+                    navigate('/launching-soon');
                   }
                 }}
               >

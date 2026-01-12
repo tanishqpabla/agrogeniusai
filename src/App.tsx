@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import ParaliManagement from "./pages/ParaliManagement";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
+import LaunchingSoon from "./pages/LaunchingSoon";
 import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,9 @@ const AppRoutes = () => (
     <Route path="/gov-schemes" element={<ProtectedRoute><GovSchemes /></ProtectedRoute>} />
     <Route path="/parali" element={<ProtectedRoute><ParaliManagement /></ProtectedRoute>} />
     <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+    
+    {/* Launching Soon */}
+    <Route path="/launching-soon" element={<ProtectedRoute><LaunchingSoon /></ProtectedRoute>} />
     
     {/* Catch-all */}
     <Route path="*" element={<NotFound />} />
