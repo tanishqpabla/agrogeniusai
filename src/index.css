@@ -2,41 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* AgroGenius AI Design System - Calm Light Blue Theme */
+/* AgroGenius AI Design System - Fresh Green Farming Theme */
 
 @layer base {
   :root {
-    /* Light Blue Calm Theme */
-    --background: 210 40% 98%;
-    --foreground: 215 25% 20%;
+    /* Fresh Green Farming Theme */
+    --background: 120 20% 98%;
+    --foreground: 140 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 20%;
+    --card-foreground: 140 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 20%;
+    --popover-foreground: 140 25% 15%;
 
-    /* Primary - Calm Light Blue */
-    --primary: 205 85% 55%;
+    /* Primary - Fresh Leaf Green */
+    --primary: 142 55% 42%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Soft Blue Gray */
-    --secondary: 210 25% 93%;
-    --secondary-foreground: 215 25% 30%;
+    /* Secondary - Soft Sage */
+    --secondary: 130 20% 92%;
+    --secondary-foreground: 140 25% 25%;
 
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 120 15% 94%;
+    --muted-foreground: 140 15% 45%;
 
-    /* Accent - Trustworthy Blue */
-    --accent: 205 75% 90%;
-    --accent-foreground: 205 85% 35%;
+    /* Accent - Light Mint */
+    --accent: 145 40% 92%;
+    --accent-foreground: 142 55% 30%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 205 85% 55%;
+    --border: 130 15% 88%;
+    --input: 130 15% 88%;
+    --ring: 142 55% 42%;
 
     --radius: 1rem;
 
@@ -48,56 +48,56 @@
     --status-danger: 0 70% 55%;
     --status-danger-light: 0 60% 95%;
 
-    /* Custom Agro Colors - Updated for Light Blue Theme */
-    --agro-green: 142 55% 40%;
+    /* Custom Agro Colors - Green Farming Theme */
+    --agro-green: 142 55% 42%;
     --agro-green-light: 142 45% 94%;
     --agro-earth: 30 35% 45%;
     --agro-earth-light: 30 30% 94%;
-    --agro-sky: 205 85% 55%;
-    --agro-sky-light: 205 70% 95%;
+    --agro-sky: 200 70% 55%;
+    --agro-sky-light: 200 60% 94%;
     --agro-sun: 45 90% 55%;
     --agro-sun-light: 45 85% 94%;
-    --agro-soil: 20 30% 30%;
-    --agro-leaf: 142 50% 45%;
+    --agro-soil: 25 35% 28%;
+    --agro-leaf: 130 50% 38%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 215 20% 30%;
-    --sidebar-primary: 205 85% 55%;
+    --sidebar-background: 120 15% 98%;
+    --sidebar-foreground: 140 20% 25%;
+    --sidebar-primary: 142 55% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 205 75% 95%;
-    --sidebar-accent-foreground: 205 85% 35%;
-    --sidebar-border: 210 20% 90%;
-    --sidebar-ring: 205 85% 55%;
+    --sidebar-accent: 145 40% 94%;
+    --sidebar-accent-foreground: 142 55% 30%;
+    --sidebar-border: 130 15% 88%;
+    --sidebar-ring: 142 55% 42%;
   }
 
   .dark {
-    --background: 215 25% 10%;
-    --foreground: 210 20% 95%;
+    --background: 140 20% 8%;
+    --foreground: 120 15% 95%;
 
-    --card: 215 20% 14%;
-    --card-foreground: 210 20% 95%;
+    --card: 140 18% 12%;
+    --card-foreground: 120 15% 95%;
 
-    --popover: 215 20% 14%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 140 18% 12%;
+    --popover-foreground: 120 15% 95%;
 
-    --primary: 205 75% 50%;
+    --primary: 142 50% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 20% 20%;
-    --secondary-foreground: 210 15% 85%;
+    --secondary: 140 15% 18%;
+    --secondary-foreground: 130 15% 85%;
 
-    --muted: 215 15% 22%;
-    --muted-foreground: 210 10% 60%;
+    --muted: 140 12% 20%;
+    --muted-foreground: 130 10% 60%;
 
-    --accent: 205 60% 25%;
-    --accent-foreground: 205 70% 80%;
+    --accent: 145 30% 22%;
+    --accent-foreground: 142 45% 75%;
 
     --destructive: 0 60% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 15% 22%;
-    --input: 215 15% 22%;
-    --ring: 205 75% 50%;
+    --border: 140 12% 20%;
+    --input: 140 12% 20%;
+    --ring: 142 50% 48%;
 
     --status-safe: 142 50% 45%;
     --status-safe-light: 142 30% 20%;
@@ -106,23 +106,23 @@
     --status-danger: 0 60% 45%;
     --status-danger-light: 0 40% 20%;
 
-    --agro-green: 142 50% 45%;
-    --agro-green-light: 142 30% 20%;
+    --agro-green: 142 50% 48%;
+    --agro-green-light: 142 30% 18%;
     --agro-earth: 30 25% 35%;
-    --agro-earth-light: 30 20% 20%;
-    --agro-sky: 205 60% 50%;
-    --agro-sky-light: 205 40% 22%;
+    --agro-earth-light: 30 20% 18%;
+    --agro-sky: 200 55% 50%;
+    --agro-sky-light: 200 40% 20%;
     --agro-sun: 45 70% 45%;
-    --agro-sun-light: 45 50% 20%;
+    --agro-sun-light: 45 50% 18%;
 
-    --sidebar-background: 215 25% 12%;
-    --sidebar-foreground: 210 15% 90%;
-    --sidebar-primary: 205 75% 50%;
+    --sidebar-background: 140 18% 10%;
+    --sidebar-foreground: 130 12% 90%;
+    --sidebar-primary: 142 50% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 205 50% 22%;
-    --sidebar-accent-foreground: 205 60% 80%;
-    --sidebar-border: 215 15% 22%;
-    --sidebar-ring: 205 75% 50%;
+    --sidebar-accent: 145 25% 18%;
+    --sidebar-accent-foreground: 142 40% 75%;
+    --sidebar-border: 140 12% 20%;
+    --sidebar-ring: 142 50% 48%;
   }
 }
 
