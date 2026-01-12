@@ -277,25 +277,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      {/* Stats */}
-      <div className="px-4 mt-4">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-agro-green-light rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-primary">12</p>
-            <p className="text-xs text-muted-foreground">{text.scansDone}</p>
-          </div>
-          <div className="bg-agro-sky-light rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-agro-sky">28</p>
-            <p className="text-xs text-muted-foreground">{text.aiQueries}</p>
-          </div>
-          <div className="bg-agro-sun-light rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-agro-sun">5</p>
-            <p className="text-xs text-muted-foreground">{text.orders}</p>
-          </div>
-        </div>
-      </div>
-
       {/* Menu Items */}
       <div className="px-4 mt-6">
         <div className="bg-card rounded-2xl border overflow-hidden">
