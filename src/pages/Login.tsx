@@ -189,8 +189,6 @@ const Login = () => {
   const [fullName, setFullName] = useState('');
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState<Language>('en');
-  const [showOtp, setShowOtp] = useState(false);
-  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -198,7 +196,8 @@ const Login = () => {
   const text = translations[language];
   const currentLang = languages.find(l => l.code === language) || languages[0];
 
-  const handleSendOtp = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (phone.length !== 10) {
       setError(text.invalidPhone);
       return;
@@ -211,17 +210,9 @@ const Login = () => {
       setError(text.enterLocation);
       return;
     }
-    setShowOtp(true);
     setError('');
-  };
-
-  const handleVerifyOtp = () => {
-    if (otp === '1234') {
-      login(phone, fullName.trim(), location.trim(), language);
-      navigate('/home');
-    } else {
-      setError(text.invalidOtp);
-    }
+    login(phone, fullName.trim(), location.trim(), language);
+    navigate('/home');
   };
 
   return (
@@ -267,100 +258,66 @@ const Login = () => {
       {/* Login Form */}
       <div className="bg-card rounded-t-3xl p-6 shadow-lg animate-slide-up">
         <h2 className="text-xl font-semibold mb-6 text-center">
-          {showOtp ? text.otpTitle : text.loginTitle}
+          {text.loginTitle}
         </h2>
 
-        {!showOtp ? (
-          <div className="space-y-4">
-            {/* Full Name Input */}
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
-                <User className="w-5 h-5" />
-              </div>
-              <Input
-                type="text"
-                placeholder={text.fullName}
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="pl-12 h-14 text-lg rounded-xl"
-                maxLength={50}
-              />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Full Name Input */}
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
+              <User className="w-5 h-5" />
             </div>
-
-            {/* Phone Number Input */}
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground">
-                <Phone className="w-5 h-5" />
-                <span className="text-sm font-medium">+91</span>
-              </div>
-              <Input
-                type="tel"
-                placeholder={text.phoneNumber}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                className="pl-20 h-14 text-lg rounded-xl"
-                maxLength={10}
-              />
-            </div>
-
-            {/* Location Input */}
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
-                <MapPin className="w-5 h-5" />
-              </div>
-              <Input
-                type="text"
-                placeholder={text.locationPlaceholder}
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="pl-12 h-14 text-lg rounded-xl"
-                maxLength={50}
-              />
-            </div>
-
-            {error && <p className="text-destructive text-sm">{error}</p>}
-            <Button 
-              onClick={handleSendOtp} 
-              className="w-full h-14 text-lg rounded-xl gap-2"
-              disabled={phone.length !== 10 || !fullName.trim() || !location.trim()}
-            >
-              {text.sendOtp}
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+            <Input
+              type="text"
+              placeholder={text.fullName}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="pl-12 h-14 text-lg rounded-xl"
+              maxLength={50}
+            />
           </div>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center mb-4">
-              {text.otpSentTo} +91 {phone}
-            </p>
+
+          {/* Phone Number Input */}
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground">
+              <Phone className="w-5 h-5" />
+              <span className="text-sm font-medium">+91</span>
+            </div>
             <Input
               type="tel"
-              placeholder="Enter 4-digit OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              className="h-14 text-2xl text-center tracking-[0.5em] rounded-xl"
-              maxLength={4}
+              placeholder={text.phoneNumber}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              className="pl-20 h-14 text-lg rounded-xl"
+              maxLength={10}
             />
-            <p className="text-xs text-muted-foreground text-center">
-              {text.demoOtp}: <span className="font-mono font-bold">1234</span>
-            </p>
-            {error && <p className="text-destructive text-sm text-center">{error}</p>}
-            <Button 
-              onClick={handleVerifyOtp} 
-              className="w-full h-14 text-lg rounded-xl gap-2"
-              disabled={otp.length !== 4}
-            >
-              {text.verifyLogin}
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-            <button 
-              onClick={() => { setShowOtp(false); setOtp(''); setError(''); }}
-              className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {text.changeDetails}
-            </button>
           </div>
-        )}
+
+          {/* Location Input */}
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
+              <MapPin className="w-5 h-5" />
+            </div>
+            <Input
+              type="text"
+              placeholder={text.locationPlaceholder}
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="pl-12 h-14 text-lg rounded-xl"
+              maxLength={50}
+            />
+          </div>
+
+          {error && <p className="text-destructive text-sm">{error}</p>}
+          <Button 
+            type="submit"
+            className="w-full h-14 text-lg rounded-xl gap-2"
+            disabled={phone.length !== 10 || !fullName.trim() || !location.trim()}
+          >
+            {text.sendOtp}
+            <ArrowRight className="w-5 h-5" />
+          </Button>
+        </form>
 
         <p className="text-xs text-muted-foreground text-center mt-6">
           {text.terms}
