@@ -11,7 +11,11 @@ import {
   Landmark,
   ShoppingBag,
   Flame,
-  Crown
+  Sun,
+  Droplets,
+  Wind,
+  ChevronRight,
+  Store
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import PremiumBanner from '@/components/PremiumBanner';
@@ -91,6 +95,15 @@ const featureCards = [
   },
 ];
 
+// Nearby mandis data based on location
+const nearbyMandis = [
+  { name: 'Karnal Mandi', distance: '12 km', crop: 'Wheat', price: '₹2,250/q', trend: 'up' },
+  { name: 'Panipat Mandi', distance: '28 km', crop: 'Rice', price: '₹3,100/q', trend: 'up' },
+  { name: 'Kurukshetra Mandi', distance: '35 km', crop: 'Mustard', price: '₹5,450/q', trend: 'down' },
+  { name: 'Ambala Mandi', distance: '45 km', crop: 'Cotton', price: '₹6,800/q', trend: 'up' },
+  { name: 'Sonipat Mandi', distance: '52 km', crop: 'Wheat', price: '₹2,180/q', trend: 'stable' },
+];
+
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -117,18 +130,88 @@ const Home = () => {
           />
         </div>
         
-        {/* Quick Stats */}
+        {/* Weather Widget */}
         <div className="bg-primary-foreground/10 rounded-2xl p-4 backdrop-blur-sm">
-          <p className="text-primary-foreground/80 text-xs mb-2">Today's Tip</p>
-          <p className="text-primary-foreground text-sm">
-            🌾 Perfect weather for wheat sowing in your region. Check weather advisory for more details.
-          </p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-primary-foreground/80 text-xs">Weather in {user?.location}</p>
+            <button 
+              onClick={() => navigate('/weather')}
+              className="text-primary-foreground/80 text-xs flex items-center gap-1 hover:text-primary-foreground"
+            >
+              View Details <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                <Sun className="w-7 h-7 text-yellow-300" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-primary-foreground">28°C</p>
+                <p className="text-primary-foreground/80 text-xs">Partly Cloudy</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 text-right">
+              <div className="flex items-center gap-2 text-primary-foreground/80">
+                <Droplets className="w-4 h-4" />
+                <span className="text-xs">65% Humidity</span>
+              </div>
+              <div className="flex items-center gap-2 text-primary-foreground/80">
+                <Wind className="w-4 h-4" />
+                <span className="text-xs">12 km/h Wind</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 pt-3 border-t border-primary-foreground/20">
+            <p className="text-primary-foreground text-sm">
+              🌾 Perfect weather for wheat sowing. No rain expected for next 3 days.
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Premium Banner */}
       <div className="px-4 -mt-2 mb-2">
         <PremiumBanner variant="full" />
+      </div>
+
+      {/* Nearby Mandis Section */}
+      <div className="px-4 mt-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <Store className="w-5 h-5 text-primary" />
+            Mandis Near {user?.location}
+          </h2>
+          <button 
+            onClick={() => navigate('/market')}
+            className="text-primary text-sm flex items-center gap-1"
+          >
+            View All <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+          {nearbyMandis.map((mandi, index) => (
+            <button
+              key={mandi.name}
+              onClick={() => navigate('/market')}
+              className="flex-shrink-0 bg-card border rounded-xl p-3 min-w-[160px] text-left hover:border-primary/50 transition-colors"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-muted-foreground">{mandi.distance}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                  mandi.trend === 'up' ? 'bg-green-100 text-green-700' :
+                  mandi.trend === 'down' ? 'bg-red-100 text-red-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {mandi.trend === 'up' ? '↑' : mandi.trend === 'down' ? '↓' : '→'}
+                </span>
+              </div>
+              <p className="font-medium text-foreground text-sm truncate">{mandi.name}</p>
+              <p className="text-xs text-muted-foreground">{mandi.crop}</p>
+              <p className="text-primary font-semibold mt-1">{mandi.price}</p>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Feature Cards */}
