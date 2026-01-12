@@ -69,6 +69,14 @@ export default {
           soil: "hsl(var(--agro-soil))",
           leaf: "hsl(var(--agro-leaf))",
         },
+        status: {
+          safe: "hsl(var(--status-safe))",
+          "safe-light": "hsl(var(--status-safe-light))",
+          warning: "hsl(var(--status-warning))",
+          "warning-light": "hsl(var(--status-warning-light))",
+          danger: "hsl(var(--status-danger))",
+          "danger-light": "hsl(var(--status-danger-light))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
