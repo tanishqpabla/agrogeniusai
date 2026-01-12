@@ -32,7 +32,7 @@ const pageTranslations: Record<Language, {
   en: {
     title: 'Weather Advisory',
     subtitle: 'Farming recommendations based on weather',
-    forecast: '5-Day Forecast',
+    forecast: '7-Day Forecast',
     recommendations: '🌾 Detailed Farming Advisory',
     rainAlert: 'Weather Alert',
     selectDistrict: 'Select District',
@@ -49,7 +49,7 @@ const pageTranslations: Record<Language, {
   hi: {
     title: 'मौसम सलाहकार',
     subtitle: 'मौसम के आधार पर खेती की सिफारिशें',
-    forecast: '5-दिन का पूर्वानुमान',
+    forecast: '7-दिन का पूर्वानुमान',
     recommendations: '🌾 विस्तृत खेती सलाह',
     rainAlert: 'मौसम चेतावनी',
     selectDistrict: 'जिला चुनें',
@@ -66,7 +66,7 @@ const pageTranslations: Record<Language, {
   pa: {
     title: 'ਮੌਸਮ ਸਲਾਹਕਾਰ',
     subtitle: 'ਮੌਸਮ ਦੇ ਆਧਾਰ \'ਤੇ ਖੇਤੀ ਸਿਫਾਰਸ਼ਾਂ',
-    forecast: '5-ਦਿਨ ਪੂਰਵ ਅਨੁਮਾਨ',
+    forecast: '7-ਦਿਨ ਪੂਰਵ ਅਨੁਮਾਨ',
     recommendations: '🌾 ਵਿਸਤ੍ਰਿਤ ਖੇਤੀ ਸਲਾਹ',
     rainAlert: 'ਮੌਸਮ ਚੇਤਾਵਨੀ',
     selectDistrict: 'ਜ਼ਿਲ੍ਹਾ ਚੁਣੋ',
@@ -83,7 +83,7 @@ const pageTranslations: Record<Language, {
   mr: {
     title: 'हवामान सल्लागार',
     subtitle: 'हवामानावर आधारित शेती शिफारसी',
-    forecast: '5-दिवसांचा अंदाज',
+    forecast: '7-दिवसांचा अंदाज',
     recommendations: '🌾 तपशीलवार शेती सल्ला',
     rainAlert: 'हवामान इशारा',
     selectDistrict: 'जिल्हा निवडा',
@@ -100,7 +100,7 @@ const pageTranslations: Record<Language, {
   ta: {
     title: 'வானிலை ஆலோசனை',
     subtitle: 'வானிலையின் அடிப்படையில் விவசாய பரிந்துரைகள்',
-    forecast: '5 நாள் முன்னறிவிப்பு',
+    forecast: '7 நாள் முன்னறிவிப்பு',
     recommendations: '🌾 விரிவான விவசாய ஆலோசனை',
     rainAlert: 'வானிலை எச்சரிக்கை',
     selectDistrict: 'மாவட்டம் தேர்வு',
@@ -117,7 +117,7 @@ const pageTranslations: Record<Language, {
   te: {
     title: 'వాతావరణ సలహా',
     subtitle: 'వాతావరణం ఆధారంగా వ్యవసాయ సిఫార్సులు',
-    forecast: '5 రోజుల అంచనా',
+    forecast: '7 రోజుల అంచనా',
     recommendations: '🌾 వివరమైన వ్యవసాయ సలహా',
     rainAlert: 'వాతావరణ హెచ్చరిక',
     selectDistrict: 'జిల్లా ఎంచుకోండి',
@@ -134,7 +134,7 @@ const pageTranslations: Record<Language, {
   bn: {
     title: 'আবহাওয়া পরামর্শ',
     subtitle: 'আবহাওয়ার উপর ভিত্তি করে কৃষি সুপারিশ',
-    forecast: '5 দিনের পূর্বাভাস',
+    forecast: '7 দিনের পূর্বাভাস',
     recommendations: '🌾 বিস্তারিত কৃষি পরামর্শ',
     rainAlert: 'আবহাওয়া সতর্কতা',
     selectDistrict: 'জেলা নির্বাচন করুন',
@@ -498,17 +498,27 @@ const Weather = () => {
               </div>
             )}
 
-            {/* 5-Day Forecast */}
+            {/* 7-Day Forecast */}
             {weather.forecast.length > 0 && (
-              <div className="bg-card rounded-2xl p-4 shadow-sm border">
+              <div className="bg-card rounded-2xl p-4 shadow-sm border animate-fade-in">
                 <h3 className="font-semibold text-foreground mb-3">{text.forecast}</h3>
-                <div className="flex justify-between">
-                  {weather.forecast.map((day, index) => (
-                    <div key={index} className="text-center flex-1">
-                      <p className="text-xs text-muted-foreground mb-2">{day.date}</p>
-                      <span className="text-2xl">{getWeatherIcon(day.icon)}</span>
-                      <p className="font-semibold text-foreground mt-1">{day.temp_max}°</p>
+                <div className="grid grid-cols-7 gap-1">
+                  {weather.forecast.slice(0, 7).map((day, index) => (
+                    <div 
+                      key={index} 
+                      className="text-center flex-1 p-2 rounded-xl hover:bg-accent/50 transition-colors"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <p className="text-xs font-medium text-foreground mb-1">{day.dayName}</p>
+                      <p className="text-[10px] text-muted-foreground mb-1">{day.date}</p>
+                      <span className="text-2xl block my-1">{getWeatherIcon(day.icon)}</span>
+                      <p className="font-semibold text-foreground">{day.temp_max}°</p>
                       <p className="text-xs text-muted-foreground">{day.temp_min}°</p>
+                      {day.pop > 0 && (
+                        <p className="text-[10px] text-blue-500 flex items-center justify-center gap-0.5 mt-1">
+                          <Droplets className="w-2.5 h-2.5" />{day.pop}%
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>

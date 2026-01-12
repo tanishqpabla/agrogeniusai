@@ -9,14 +9,20 @@ interface CurrentWeather {
   description: string;
   icon: string;
   main: string;
+  sunrise?: number;
+  sunset?: number;
 }
 
 interface ForecastDay {
   date: string;
+  dayName: string;
   temp_max: number;
   temp_min: number;
   icon: string;
   description: string;
+  humidity: number;
+  wind_speed: number;
+  pop: number; // Probability of precipitation
 }
 
 interface WeatherData {

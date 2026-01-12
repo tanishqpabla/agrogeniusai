@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, Language } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Leaf, Phone, ArrowRight, User, MapPin, ChevronDown } from 'lucide-react';
+import { Leaf, Phone, ArrowRight, User, MapPin, ChevronDown, Navigation, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -192,9 +193,17 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
 
   const text = translations[language];
   const currentLang = languages.find(l => l.code === language) || languages[0];
+
+  const handleDetectLocation = async () => {
+    const result = await getCurrentLocation();
+    if (result?.city) {
+      setLocation(result.city);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -293,7 +302,7 @@ const Login = () => {
             />
           </div>
 
-          {/* Location Input */}
+          {/* Location Input with GPS Button */}
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
               <MapPin className="w-5 h-5" />
@@ -303,9 +312,21 @@ const Login = () => {
               placeholder={text.locationPlaceholder}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="pl-12 h-14 text-lg rounded-xl"
+              className="pl-12 pr-14 h-14 text-lg rounded-xl"
               maxLength={50}
             />
+            <button
+              type="button"
+              onClick={handleDetectLocation}
+              disabled={gpsLoading}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {gpsLoading ? (
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              ) : (
+                <Navigation className="w-5 h-5 text-primary" />
+              )}
+            </button>
           </div>
 
           {error && <p className="text-destructive text-sm">{error}</p>}

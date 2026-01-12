@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWeather, getWeatherIcon, getFarmingTip } from '@/hooks/useWeather';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { 
   Leaf, 
   Cloud, 
@@ -18,76 +19,139 @@ import {
   Loader2,
   AlertTriangle,
   CheckCircle,
-  Thermometer
+  Navigation,
+  CloudRain,
+  Sun,
+  CloudSun,
+  Snowflake,
+  CloudLightning,
+  CloudFog
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { Card, CardContent } from '@/components/ui/card';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const cropOptions = ['Wheat', 'Rice', 'Cotton', 'Sugarcane', 'Mustard'];
 
+// Feature icons with animations
 const featureCards = [
   {
     icon: Leaf,
     title: 'Crop Scanner',
     description: 'Scan for diseases',
     path: '/scan',
+    gradient: 'from-green-500 to-emerald-600',
+    delay: 0,
   },
   {
     icon: Cloud,
     title: 'Weather',
     description: 'Farming tips',
     path: '/weather',
+    gradient: 'from-blue-500 to-cyan-600',
+    delay: 50,
   },
   {
     icon: Sprout,
     title: 'Soil Health',
     description: 'Fertilizer tips',
     path: '/soil',
+    gradient: 'from-amber-500 to-orange-600',
+    delay: 100,
   },
   {
     icon: TrendingUp,
     title: 'Mandi Prices',
     description: 'Today\'s rates',
     path: '/market',
+    gradient: 'from-purple-500 to-violet-600',
+    delay: 150,
   },
   {
     icon: Bot,
     title: 'Ask AI',
     description: 'Get advice',
     path: '/ask-ai',
+    gradient: 'from-rose-500 to-pink-600',
+    delay: 200,
   },
   {
     icon: Wheat,
     title: 'Crop Guide',
     description: 'Best crops',
     path: '/crop-recommendation',
+    gradient: 'from-yellow-500 to-amber-600',
+    delay: 250,
   },
   {
     icon: Landmark,
     title: 'Schemes',
     description: 'Subsidies',
     path: '/gov-schemes',
+    gradient: 'from-teal-500 to-cyan-600',
+    delay: 300,
   },
   {
     icon: ShoppingBag,
     title: 'Shop',
     description: 'Seeds & tools',
     path: '/shop',
+    gradient: 'from-indigo-500 to-blue-600',
+    delay: 350,
   },
   {
     icon: Flame,
     title: 'Parali',
     description: 'Stubble tips',
     path: '/parali',
+    gradient: 'from-red-500 to-orange-600',
+    delay: 400,
   },
 ];
 
+// Weather animation icons
+const getAnimatedWeatherIcon = (iconCode: string) => {
+  const iconMap: Record<string, { icon: typeof Sun; color: string; animation: string }> = {
+    '01d': { icon: Sun, color: 'text-yellow-500', animation: 'animate-pulse-gentle' },
+    '01n': { icon: Sun, color: 'text-blue-300', animation: 'animate-pulse-gentle' },
+    '02d': { icon: CloudSun, color: 'text-amber-500', animation: 'animate-fade-in' },
+    '02n': { icon: Cloud, color: 'text-gray-400', animation: 'animate-fade-in' },
+    '03d': { icon: Cloud, color: 'text-gray-500', animation: 'animate-fade-in' },
+    '03n': { icon: Cloud, color: 'text-gray-500', animation: 'animate-fade-in' },
+    '04d': { icon: Cloud, color: 'text-gray-600', animation: 'animate-fade-in' },
+    '04n': { icon: Cloud, color: 'text-gray-600', animation: 'animate-fade-in' },
+    '09d': { icon: CloudRain, color: 'text-blue-500', animation: 'animate-pulse-gentle' },
+    '09n': { icon: CloudRain, color: 'text-blue-500', animation: 'animate-pulse-gentle' },
+    '10d': { icon: CloudRain, color: 'text-blue-600', animation: 'animate-pulse-gentle' },
+    '10n': { icon: CloudRain, color: 'text-blue-600', animation: 'animate-pulse-gentle' },
+    '11d': { icon: CloudLightning, color: 'text-yellow-600', animation: 'animate-pulse' },
+    '11n': { icon: CloudLightning, color: 'text-yellow-600', animation: 'animate-pulse' },
+    '13d': { icon: Snowflake, color: 'text-cyan-400', animation: 'animate-pulse-gentle' },
+    '13n': { icon: Snowflake, color: 'text-cyan-400', animation: 'animate-pulse-gentle' },
+    '50d': { icon: CloudFog, color: 'text-gray-400', animation: 'animate-fade-in' },
+    '50n': { icon: CloudFog, color: 'text-gray-400', animation: 'animate-fade-in' },
+  };
+  return iconMap[iconCode] || { icon: Sun, color: 'text-yellow-500', animation: 'animate-pulse-gentle' };
+};
+
 const Home = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const { weather, loading: weatherLoading, error: weatherError } = useWeather(user?.location);
+  const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
   const [selectedCrop, setSelectedCrop] = useState('Wheat');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleUpdateLocation = async () => {
+    const result = await getCurrentLocation();
+    if (result?.city && user) {
+      updateProfile(user.name, result.city);
+    }
+  };
 
   // Calculate disease risk based on weather conditions
   const getDiseaseRisk = () => {
@@ -143,18 +207,32 @@ const Home = () => {
       </div>
 
       <div className="px-4 space-y-4 -mt-2">
-        {/* Location Strip */}
-        <Card className="shadow-sm border-0">
+        {/* Location Strip with GPS Button */}
+        <Card className="shadow-sm border-0 animate-fade-in">
           <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-foreground">{user?.location}</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">{user?.location}</span>
+              </div>
+              <button
+                onClick={handleUpdateLocation}
+                disabled={gpsLoading}
+                className="flex items-center gap-1 text-xs text-primary hover:bg-primary/10 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {gpsLoading ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <Navigation className="w-3 h-3" />
+                )}
+                <span>Update</span>
+              </button>
             </div>
           </CardContent>
         </Card>
 
         {/* Weather Advisory - Main Card */}
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-primary/5 to-accent/30">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-primary/5 to-accent/30 overflow-hidden animate-fade-in">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -168,7 +246,7 @@ const Home = () => {
               </div>
               <button 
                 onClick={() => navigate('/weather')}
-                className="text-xs text-primary flex items-center gap-1"
+                className="text-xs text-primary flex items-center gap-1 hover:underline transition-all"
               >
                 Details <ChevronRight className="w-3 h-3" />
               </button>
@@ -183,7 +261,15 @@ const Home = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                      <span className="text-3xl">{getWeatherIcon(weather.current.icon)}</span>
+                      {(() => {
+                        const weatherIcon = getAnimatedWeatherIcon(weather.current.icon);
+                        const WeatherIconComponent = weatherIcon.icon;
+                        return (
+                          <WeatherIconComponent 
+                            className={`w-8 h-8 ${weatherIcon.color} ${weatherIcon.animation}`} 
+                          />
+                        );
+                      })()}
                     </div>
                     <div>
                       <p className="text-3xl font-bold text-foreground">{weather.current.temp}°C</p>
@@ -202,6 +288,36 @@ const Home = () => {
                   </div>
                 </div>
 
+                {/* 7-Day Forecast Preview */}
+                {weather.forecast && weather.forecast.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-xs font-medium text-muted-foreground mb-2">7-Day Forecast</h4>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                      {weather.forecast.slice(0, 7).map((day, index) => {
+                        const dayWeatherIcon = getAnimatedWeatherIcon(day.icon);
+                        const DayIconComponent = dayWeatherIcon.icon;
+                        return (
+                          <div 
+                            key={index}
+                            className="flex-shrink-0 flex flex-col items-center p-2 bg-card/60 rounded-xl min-w-[60px] hover:bg-card transition-colors"
+                            style={{ animationDelay: `${index * 50}ms` }}
+                          >
+                            <span className="text-[10px] font-medium text-muted-foreground">{day.dayName}</span>
+                            <DayIconComponent className={`w-5 h-5 my-1 ${dayWeatherIcon.color}`} />
+                            <span className="text-xs font-semibold text-foreground">{day.temp_max}°</span>
+                            <span className="text-[10px] text-muted-foreground">{day.temp_min}°</span>
+                            {day.pop > 0 && (
+                              <span className="text-[9px] text-blue-500 flex items-center gap-0.5 mt-0.5">
+                                <Droplets className="w-2.5 h-2.5" />{day.pop}%
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <div className="bg-card/60 rounded-xl p-3">
                   <p className="text-sm text-foreground">
                     💡 {getFarmingTip(weather.current)}
@@ -216,7 +332,7 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions Grid */}
+        {/* Quick Actions Grid with Animations */}
         <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Actions</h3>
           <div className="grid grid-cols-3 gap-3">
@@ -226,10 +342,11 @@ const Home = () => {
                 <button
                   key={card.path}
                   onClick={() => navigate(card.path)}
-                  className="bg-card p-4 rounded-2xl flex flex-col items-center gap-2 text-center shadow-sm hover:shadow-md transition-shadow border-0"
+                  className={`bg-card p-4 rounded-2xl flex flex-col items-center gap-2 text-center shadow-sm hover:shadow-lg transition-all duration-300 border-0 group hover:scale-105 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}
+                  style={{ animationDelay: `${card.delay}ms` }}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-primary" />
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{card.title}</p>
