@@ -17,7 +17,8 @@ import {
   ChevronRight,
   Loader2,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Thermometer
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { Card, CardContent } from '@/components/ui/card';
@@ -90,16 +91,16 @@ const Home = () => {
 
   // Calculate disease risk based on weather conditions
   const getDiseaseRisk = () => {
-    if (!weather) return { level: 'unknown', text: 'Loading...', color: 'bg-muted' };
+    if (!weather) return { level: 'unknown', text: 'Loading...', color: 'bg-muted', textColor: 'text-muted-foreground' };
     const humidity = weather.current.humidity;
     const temp = weather.current.temp;
     
     if (humidity > 80 && temp > 25) {
-      return { level: 'high', text: 'High Risk', color: 'bg-red-500', icon: AlertTriangle };
+      return { level: 'high', text: 'High Risk', color: 'bg-red-500', textColor: 'text-red-700', icon: AlertTriangle };
     } else if (humidity > 60 || temp > 30) {
-      return { level: 'moderate', text: 'Moderate', color: 'bg-yellow-500', icon: AlertTriangle };
+      return { level: 'moderate', text: 'Moderate', color: 'bg-yellow-500', textColor: 'text-yellow-700', icon: AlertTriangle };
     }
-    return { level: 'low', text: 'Low Risk', color: 'bg-green-500', icon: CheckCircle };
+    return { level: 'low', text: 'Low Risk', color: 'bg-green-500', textColor: 'text-green-700', icon: CheckCircle };
   };
 
   const diseaseRisk = getDiseaseRisk();
@@ -142,105 +143,76 @@ const Home = () => {
       </div>
 
       <div className="px-4 space-y-4 -mt-2">
-        {/* Location + Weather Strip */}
+        {/* Location Strip */}
         <Card className="shadow-sm border-0">
           <CardContent className="p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">{user?.location}</span>
-              </div>
-              {weatherLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-              ) : weather ? (
-                <button 
-                  onClick={() => navigate('/weather')}
-                  className="flex items-center gap-2 text-sm"
-                >
-                  <span className="text-lg">{getWeatherIcon(weather.current.icon)}</span>
-                  <span className="font-medium">{weather.current.temp}°C</span>
-                  <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                    <Droplets className="w-3 h-3" />
-                    {weather.current.humidity}%
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                    <Wind className="w-3 h-3" />
-                    {weather.current.wind_speed}
-                  </div>
-                </button>
-              ) : (
-                <span className="text-xs text-muted-foreground">Weather unavailable</span>
-              )}
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-foreground">{user?.location}</span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Disease Risk Badge */}
-        {weather && (
-          <div className="flex items-center gap-2">
-            <div className={`${diseaseRisk.color} text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5`}>
-              {diseaseRisk.icon && <diseaseRisk.icon className="w-3 h-3" />}
-              Disease Risk: {diseaseRisk.text}
-            </div>
-            {diseaseRisk.level === 'high' && (
-              <span className="text-xs text-muted-foreground">Check crops today</span>
-            )}
-          </div>
-        )}
-
-        {/* Crop Selector */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4">
-          {cropOptions.map((crop) => (
-            <button
-              key={crop}
-              onClick={() => setSelectedCrop(crop)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                selectedCrop === crop 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-card border text-foreground hover:bg-accent'
-              }`}
-            >
-              {crop}
-            </button>
-          ))}
-        </div>
-
-        {/* Today's Farm Advisory - Main Card */}
+        {/* Weather Advisory - Main Card */}
         <Card className="shadow-lg border-0 bg-gradient-to-br from-primary/5 to-accent/30">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-3">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">🌾</span>
-                  <h2 className="text-lg font-semibold text-foreground">Today's Advisory</h2>
+                  <span className="text-lg">🌦️</span>
+                  <h2 className="text-lg font-semibold text-foreground">Weather Advisory</h2>
                 </div>
                 <span className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                   🤖 AI Powered
                 </span>
               </div>
-              <span className="text-xs text-muted-foreground">{selectedCrop}</span>
+              <button 
+                onClick={() => navigate('/weather')}
+                className="text-xs text-primary flex items-center gap-1"
+              >
+                Details <ChevronRight className="w-3 h-3" />
+              </button>
             </div>
             
-            <p className="text-foreground leading-relaxed mb-4">
-              {getAdvisory()}
-            </p>
+            {weatherLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : weather ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                      <span className="text-3xl">{getWeatherIcon(weather.current.icon)}</span>
+                    </div>
+                    <div>
+                      <p className="text-3xl font-bold text-foreground">{weather.current.temp}°C</p>
+                      <p className="text-sm text-muted-foreground capitalize">{weather.current.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 text-right">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Droplets className="w-4 h-4" />
+                      <span className="text-sm">{weather.current.humidity}%</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Wind className="w-4 h-4" />
+                      <span className="text-sm">{weather.current.wind_speed} km/h</span>
+                    </div>
+                  </div>
+                </div>
 
-            {weather && (
-              <div className="bg-card/60 rounded-xl p-3 mb-4">
-                <p className="text-sm text-muted-foreground">
-                  💡 {getFarmingTip(weather.current)}
-                </p>
+                <div className="bg-card/60 rounded-xl p-3">
+                  <p className="text-sm text-foreground">
+                    💡 {getFarmingTip(weather.current)}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-muted-foreground">Weather data unavailable</p>
               </div>
             )}
-
-            <button
-              onClick={() => navigate('/ask-ai')}
-              className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
-            >
-              <Bot className="w-4 h-4" />
-              Ask for detailed advice
-              <ChevronRight className="w-4 h-4" />
-            </button>
           </CardContent>
         </Card>
 
@@ -268,6 +240,67 @@ const Home = () => {
             })}
           </div>
         </div>
+
+        {/* Crop Selector */}
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground mb-3">Select Your Crop</h3>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            {cropOptions.map((crop) => (
+              <button
+                key={crop}
+                onClick={() => setSelectedCrop(crop)}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                  selectedCrop === crop 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-card border text-foreground hover:bg-accent'
+                }`}
+              >
+                {crop}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Disease Risk & Crop Advisory Card - Bottom */}
+        <Card className="shadow-md border-0">
+          <CardContent className="p-4">
+            {/* Disease Risk Badge */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🚨</span>
+                <span className="font-medium text-foreground">Disease Risk</span>
+              </div>
+              <div className={`${diseaseRisk.color} text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5`}>
+                {diseaseRisk.icon && <diseaseRisk.icon className="w-3 h-3" />}
+                {diseaseRisk.text}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border mb-4"></div>
+
+            {/* Crop Advisory */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🌾</span>
+                  <span className="font-medium text-foreground">{selectedCrop} Advisory</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                {getAdvisory()}
+              </p>
+              <button
+                onClick={() => navigate('/ask-ai')}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
+              >
+                <Bot className="w-4 h-4" />
+                Ask for detailed advice
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
