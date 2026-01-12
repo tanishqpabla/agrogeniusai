@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { VoiceInput } from '@/components/VoiceInput';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Language } from '@/contexts/AuthContext';
+import PremiumBanner from '@/components/PremiumBanner';
 
 interface Message {
   id: string;
@@ -330,6 +331,11 @@ const AskAI = () => {
                   {q}
                 </button>
               ))}
+            </div>
+
+            {/* Premium Banner */}
+            <div className="mt-6">
+              <PremiumBanner variant="compact" />
             </div>
           </div>
         ) : (
