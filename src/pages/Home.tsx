@@ -10,9 +10,11 @@ import {
   Wheat,
   Landmark,
   ShoppingBag,
-  Flame
+  Flame,
+  Crown
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const featureCards = [
   {
@@ -124,8 +126,13 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Premium Banner */}
+      <div className="px-4 -mt-2 mb-2">
+        <PremiumBanner variant="full" />
+      </div>
+
       {/* Feature Cards */}
-      <div className="p-4 -mt-4">
+      <div className="p-4">
         <h2 className="text-lg font-semibold mb-4 text-foreground">How can I help you today?</h2>
         <div className="grid gap-4">
           {featureCards.map((card, index) => {

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { ArrowLeft, Camera, Upload, Leaf, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const diseases = [
   {
@@ -138,6 +139,9 @@ const CropScanner = () => {
                 <li>• Include both healthy and diseased parts</li>
               </ul>
             </div>
+
+            {/* Premium Banner */}
+            <PremiumBanner variant="compact" />
           </>
         ) : (
           <>

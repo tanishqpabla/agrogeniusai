@@ -12,7 +12,8 @@ import {
   HelpCircle,
   Star,
   Pencil,
-  Check
+  Check,
+  Crown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -25,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const languages: { code: Language; label: string }[] = [
   { code: 'en', label: 'English' },
@@ -335,6 +337,11 @@ const Profile = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Premium Banner */}
+      <div className="px-4 mt-6">
+        <PremiumBanner variant="full" />
       </div>
 
       {/* App Info */}
