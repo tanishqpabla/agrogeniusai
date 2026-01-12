@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWeather, getWeatherIcon, getFarmingTip } from '@/hooks/useWeather';
 import { 
   Leaf, 
   Cloud, 
@@ -11,11 +12,11 @@ import {
   Landmark,
   ShoppingBag,
   Flame,
-  Sun,
   Droplets,
   Wind,
   ChevronRight,
-  Store
+  Store,
+  Loader2
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import PremiumBanner from '@/components/PremiumBanner';
@@ -107,6 +108,7 @@ const nearbyMandis = [
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { weather, loading: weatherLoading, error: weatherError } = useWeather(user?.location);
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +135,9 @@ const Home = () => {
         {/* Weather Widget */}
         <div className="bg-primary-foreground/10 rounded-2xl p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-primary-foreground/80 text-xs">Weather in {user?.location}</p>
+            <p className="text-primary-foreground/80 text-xs">
+              Weather in {weather?.location || user?.location}
+            </p>
             <button 
               onClick={() => navigate('/weather')}
               className="text-primary-foreground/80 text-xs flex items-center gap-1 hover:text-primary-foreground"
@@ -141,32 +145,50 @@ const Home = () => {
               View Details <ChevronRight className="w-3 h-3" />
             </button>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-                <Sun className="w-7 h-7 text-yellow-300" />
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-primary-foreground">28°C</p>
-                <p className="text-primary-foreground/80 text-xs">Partly Cloudy</p>
-              </div>
+          
+          {weatherLoading ? (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="w-8 h-8 text-primary-foreground animate-spin" />
             </div>
-            <div className="flex flex-col gap-2 text-right">
-              <div className="flex items-center gap-2 text-primary-foreground/80">
-                <Droplets className="w-4 h-4" />
-                <span className="text-xs">65% Humidity</span>
-              </div>
-              <div className="flex items-center gap-2 text-primary-foreground/80">
-                <Wind className="w-4 h-4" />
-                <span className="text-xs">12 km/h Wind</span>
-              </div>
+          ) : weatherError ? (
+            <div className="text-center py-4">
+              <p className="text-primary-foreground/80 text-sm">Unable to load weather</p>
+              <p className="text-primary-foreground/60 text-xs mt-1">{weatherError}</p>
             </div>
-          </div>
-          <div className="mt-3 pt-3 border-t border-primary-foreground/20">
-            <p className="text-primary-foreground text-sm">
-              🌾 Perfect weather for wheat sowing. No rain expected for next 3 days.
-            </p>
-          </div>
+          ) : weather ? (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                    <span className="text-3xl">{getWeatherIcon(weather.current.icon)}</span>
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold text-primary-foreground">{weather.current.temp}°C</p>
+                    <p className="text-primary-foreground/80 text-xs capitalize">{weather.current.description}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 text-right">
+                  <div className="flex items-center gap-2 text-primary-foreground/80">
+                    <Droplets className="w-4 h-4" />
+                    <span className="text-xs">{weather.current.humidity}% Humidity</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-primary-foreground/80">
+                    <Wind className="w-4 h-4" />
+                    <span className="text-xs">{weather.current.wind_speed} km/h Wind</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-primary-foreground/20">
+                <p className="text-primary-foreground text-sm">
+                  {getFarmingTip(weather.current)}
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-primary-foreground/80 text-sm">Weather data unavailable</p>
+            </div>
+          )}
         </div>
       </div>
 
