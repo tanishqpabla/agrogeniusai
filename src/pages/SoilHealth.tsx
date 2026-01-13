@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const soilTypes = ['Clay', 'Sandy', 'Loamy', 'Black (Regur)', 'Red Soil', 'Alluvial'];
 const crops = ['Wheat', 'Rice', 'Cotton', 'Mustard', 'Sugarcane', 'Maize', 'Vegetables'];
@@ -203,6 +204,11 @@ const SoilHealth = () => {
             </div>
           </div>
         )}
+
+        {/* Premium Banner */}
+        <div className="mt-6">
+          <PremiumBanner variant="compact" />
+        </div>
       </div>
     </div>
   );

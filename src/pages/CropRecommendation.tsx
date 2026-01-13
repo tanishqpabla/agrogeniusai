@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const soilTypes = [
   { value: 'clay', label: 'Clay Soil (चिकनी मिट्टी)' },
@@ -283,6 +284,11 @@ const CropRecommendation = () => {
             ))}
           </div>
         )}
+
+        {/* Premium Banner */}
+        <div className="mt-6">
+          <PremiumBanner variant="compact" />
+        </div>
       </div>
     </div>
   );
