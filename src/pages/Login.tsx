@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, Language } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Leaf, Phone, ArrowRight, User, MapPin, ChevronDown, Navigation, Loader2 } from 'lucide-react';
+import { Leaf, Phone, ArrowRight, User, MapPin, ChevronDown, Navigation, Loader2, MapPinned } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import {
@@ -12,6 +12,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const languages: { code: Language; label: string; short: string }[] = [
   { code: 'en', label: 'English', short: 'EN' },
@@ -42,6 +49,11 @@ const translations: Record<Language, {
   enterName: string;
   enterLocation: string;
   invalidOtp: string;
+  locationPermission: string;
+  locationPermissionDesc: string;
+  allowLocation: string;
+  manualEntry: string;
+  detectingLocation: string;
 }> = {
   en: {
     title: 'AgroGenius AI',
@@ -62,6 +74,11 @@ const translations: Record<Language, {
     enterName: 'Please enter your full name',
     enterLocation: 'Please enter your location',
     invalidOtp: 'Invalid OTP. Use 1234 for demo.',
+    locationPermission: 'Enable Location Access',
+    locationPermissionDesc: 'Allow AgroGenius AI to access your location for accurate weather forecasts, market prices, and farming advisories specific to your area.',
+    allowLocation: 'Allow Location',
+    manualEntry: 'Enter Manually',
+    detectingLocation: 'Detecting your location...',
   },
   hi: {
     title: 'एग्रोजीनियस AI',
@@ -82,6 +99,11 @@ const translations: Record<Language, {
     enterName: 'कृपया अपना पूरा नाम दर्ज करें',
     enterLocation: 'कृपया अपना स्थान दर्ज करें',
     invalidOtp: 'अमान्य OTP। डेमो के लिए 1234 का उपयोग करें।',
+    locationPermission: 'स्थान एक्सेस सक्षम करें',
+    locationPermissionDesc: 'सटीक मौसम पूर्वानुमान, बाजार मूल्य और आपके क्षेत्र के लिए खेती सलाह के लिए AgroGenius AI को आपके स्थान तक पहुंचने दें।',
+    allowLocation: 'स्थान की अनुमति दें',
+    manualEntry: 'मैन्युअल रूप से दर्ज करें',
+    detectingLocation: 'आपका स्थान पता लगाया जा रहा है...',
   },
   pa: {
     title: 'ਐਗਰੋਜੀਨੀਅਸ AI',
@@ -102,6 +124,11 @@ const translations: Record<Language, {
     enterName: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਾਖਲ ਕਰੋ',
     enterLocation: 'ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸਥਾਨ ਦਾਖਲ ਕਰੋ',
     invalidOtp: 'ਅਵੈਧ OTP। ਡੈਮੋ ਲਈ 1234 ਵਰਤੋ।',
+    locationPermission: 'ਸਥਾਨ ਐਕਸੈਸ ਸਮਰੱਥ ਕਰੋ',
+    locationPermissionDesc: 'ਸਹੀ ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ, ਬਾਜ਼ਾਰ ਦੀਆਂ ਕੀਮਤਾਂ ਅਤੇ ਤੁਹਾਡੇ ਖੇਤਰ ਲਈ ਖੇਤੀ ਸਲਾਹ ਲਈ AgroGenius AI ਨੂੰ ਤੁਹਾਡੇ ਸਥਾਨ ਤੱਕ ਪਹੁੰਚ ਦਿਓ।',
+    allowLocation: 'ਸਥਾਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ',
+    manualEntry: 'ਹੱਥੀਂ ਦਾਖਲ ਕਰੋ',
+    detectingLocation: 'ਤੁਹਾਡਾ ਸਥਾਨ ਲੱਭਿਆ ਜਾ ਰਿਹਾ ਹੈ...',
   },
   mr: {
     title: 'ॲग्रोजीनियस AI',
@@ -122,6 +149,11 @@ const translations: Record<Language, {
     enterName: 'कृपया तुमचे पूर्ण नाव टाका',
     enterLocation: 'कृपया तुमचे स्थान टाका',
     invalidOtp: 'अवैध OTP। डेमोसाठी 1234 वापरा।',
+    locationPermission: 'स्थान प्रवेश सक्षम करा',
+    locationPermissionDesc: 'अचूक हवामान अंदाज, बाजार भाव आणि तुमच्या क्षेत्रासाठी शेती सल्ला यासाठी AgroGenius AI ला तुमच्या स्थानात प्रवेश करू द्या।',
+    allowLocation: 'स्थान परवानगी द्या',
+    manualEntry: 'मॅन्युअली प्रविष्ट करा',
+    detectingLocation: 'तुमचे स्थान शोधत आहे...',
   },
   ta: {
     title: 'அக்ரோஜீனியஸ் AI',
@@ -142,6 +174,11 @@ const translations: Record<Language, {
     enterName: 'உங்கள் முழு பெயரை உள்ளிடவும்',
     enterLocation: 'உங்கள் இடத்தை உள்ளிடவும்',
     invalidOtp: 'தவறான OTP. டெமோவிற்கு 1234 பயன்படுத்தவும்.',
+    locationPermission: 'இருப்பிட அணுகலை இயக்கு',
+    locationPermissionDesc: 'துல்லியமான வானிலை முன்னறிவிப்பு, சந்தை விலைகள் மற்றும் உங்கள் பகுதிக்கான விவசாய ஆலோசனைகளுக்கு AgroGenius AI உங்கள் இருப்பிடத்தை அணுக அனுமதிக்கவும்.',
+    allowLocation: 'இருப்பிடத்தை அனுமதி',
+    manualEntry: 'கைமுறையாக உள்ளிடவும்',
+    detectingLocation: 'உங்கள் இருப்பிடம் கண்டறியப்படுகிறது...',
   },
   te: {
     title: 'అగ్రోజీనియస్ AI',
@@ -162,6 +199,11 @@ const translations: Record<Language, {
     enterName: 'దయచేసి మీ పూర్తి పేరు నమోదు చేయండి',
     enterLocation: 'దయచేసి మీ ప్రదేశం నమోదు చేయండి',
     invalidOtp: 'చెల్లని OTP. డెమో కోసం 1234 ఉపయోగించండి.',
+    locationPermission: 'స్థాన యాక్సెస్ ప్రారంభించండి',
+    locationPermissionDesc: 'ఖచ్చితమైన వాతావరణ సూచన, మార్కెట్ ధరలు మరియు మీ ప్రాంతానికి వ్యవసాయ సలహాల కోసం AgroGenius AI మీ స్థానాన్ని యాక్సెస్ చేయడానికి అనుమతించండి.',
+    allowLocation: 'స్థానం అనుమతించండి',
+    manualEntry: 'మాన్యువల్‌గా నమోదు చేయండి',
+    detectingLocation: 'మీ స్థానం గుర్తించబడుతోంది...',
   },
   bn: {
     title: 'অ্যাগ্রোজিনিয়াস AI',
@@ -182,6 +224,11 @@ const translations: Record<Language, {
     enterName: 'অনুগ্রহ করে আপনার পুরো নাম লিখুন',
     enterLocation: 'অনুগ্রহ করে আপনার অবস্থান লিখুন',
     invalidOtp: 'অবৈধ OTP। ডেমোর জন্য 1234 ব্যবহার করুন।',
+    locationPermission: 'অবস্থান অ্যাক্সেস সক্ষম করুন',
+    locationPermissionDesc: 'সঠিক আবহাওয়ার পূর্বাভাস, বাজার মূল্য এবং আপনার এলাকার জন্য কৃষি পরামর্শের জন্য AgroGenius AI কে আপনার অবস্থান অ্যাক্সেস করতে দিন।',
+    allowLocation: 'অবস্থান অনুমতি দিন',
+    manualEntry: 'ম্যানুয়ালি লিখুন',
+    detectingLocation: 'আপনার অবস্থান সনাক্ত করা হচ্ছে...',
   },
 };
 
@@ -191,12 +238,44 @@ const Login = () => {
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState<Language>('en');
   const [error, setError] = useState('');
+  const [showLocationDialog, setShowLocationDialog] = useState(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
 
   const text = translations[language];
   const currentLang = languages.find(l => l.code === language) || languages[0];
+
+  // Show location permission dialog on mount
+  useEffect(() => {
+    const hasAskedLocation = sessionStorage.getItem('locationAsked');
+    if (!hasAskedLocation) {
+      // Small delay to let page render first
+      const timer = setTimeout(() => {
+        setShowLocationDialog(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleAllowLocation = async () => {
+    setShowLocationDialog(false);
+    setIsDetectingLocation(true);
+    sessionStorage.setItem('locationAsked', 'true');
+    
+    const result = await getCurrentLocation();
+    setIsDetectingLocation(false);
+    
+    if (result?.city) {
+      setLocation(result.city);
+    }
+  };
+
+  const handleManualEntry = () => {
+    setShowLocationDialog(false);
+    sessionStorage.setItem('locationAsked', 'true');
+  };
 
   const handleDetectLocation = async () => {
     const result = await getCurrentLocation();
@@ -344,6 +423,47 @@ const Login = () => {
           {text.terms}
         </p>
       </div>
+
+      {/* Location Permission Dialog */}
+      <Dialog open={showLocationDialog} onOpenChange={setShowLocationDialog}>
+        <DialogContent className="max-w-[340px] rounded-2xl">
+          <DialogHeader className="text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <MapPinned className="w-8 h-8 text-primary" />
+            </div>
+            <DialogTitle className="text-xl">{text.locationPermission}</DialogTitle>
+            <DialogDescription className="text-sm mt-2">
+              {text.locationPermissionDesc}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 mt-4">
+            <Button 
+              onClick={handleAllowLocation} 
+              className="w-full h-12 rounded-xl gap-2"
+            >
+              <Navigation className="w-5 h-5" />
+              {text.allowLocation}
+            </Button>
+            <Button 
+              onClick={handleManualEntry} 
+              variant="outline" 
+              className="w-full h-12 rounded-xl"
+            >
+              {text.manualEntry}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Location Detection Overlay */}
+      {isDetectingLocation && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-card rounded-2xl p-6 text-center shadow-lg">
+            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto mb-3" />
+            <p className="text-sm font-medium">{text.detectingLocation}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
