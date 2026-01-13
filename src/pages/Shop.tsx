@@ -3,6 +3,7 @@ import { ArrowLeft, ShoppingCart, Star, Plus, Minus, Package } from 'lucide-reac
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const categories = ['All', 'Pesticides', 'Fertilizers', 'Seeds', 'Compost', 'Tools'];
 
@@ -221,6 +222,11 @@ const Shop = () => {
 
       {/* Products Grid */}
       <div className="p-4">
+        {/* Premium Banner */}
+        <div className="mb-4">
+          <PremiumBanner variant="compact" />
+        </div>
+        
         <div className="grid grid-cols-2 gap-3">
           {filteredProducts.map((product) => {
             const cartQty = getCartQuantity(product.id);

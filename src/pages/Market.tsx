@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const crops = ['Wheat', 'Rice (Paddy)', 'Cotton', 'Mustard', 'Sugarcane', 'Maize'];
 const mandis = [
@@ -205,6 +206,11 @@ const Market = () => {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Premium Banner */}
+        <div className="mt-4">
+          <PremiumBanner variant="compact" />
         </div>
       </div>
     </div>

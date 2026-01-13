@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import PremiumBanner from '@/components/PremiumBanner';
 
 const solutions = [
   {
@@ -194,6 +195,11 @@ const ParaliManagement = () => {
             {text.learnMore}
           </button>
         </div>
+      </div>
+
+      {/* Premium Banner */}
+      <div className="px-4 mt-6">
+        <PremiumBanner variant="full" />
       </div>
     </div>
   );

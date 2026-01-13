@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import PremiumBanner from '@/components/PremiumBanner';
 
 interface Scheme {
   id: string;
@@ -343,6 +344,9 @@ const GovSchemes = () => {
             );
           })}
         </div>
+
+        {/* Premium Banner */}
+        <PremiumBanner variant="compact" />
 
         {/* Help Section */}
         <Card className="border-0 shadow-lg bg-gradient-to-r from-primary/10 to-agro-leaf/10">
