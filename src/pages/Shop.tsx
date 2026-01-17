@@ -299,7 +299,11 @@ const Shop = () => {
                 <p className="text-sm text-primary-foreground/80">₹{totalAmount}</p>
               </div>
             </div>
-            <Button variant="secondary" className="rounded-xl">
+            <Button 
+              variant="secondary" 
+              className="rounded-xl"
+              onClick={() => navigate('/launching-soon')}
+            >
               View Cart
             </Button>
           </div>
