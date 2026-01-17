@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, Plus, Minus, Package, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, Plus, Minus, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PremiumBanner from '@/components/PremiumBanner';
 
-const categories = ['All', 'Pesticides', 'Fertilizers', 'Seeds', 'Compost', 'Tools', 'Equipment'];
+const categories = ['All', 'Pesticides', 'Fertilizers', 'Seeds', 'Compost', 'Tools'];
 
 const products = [
   {
@@ -19,7 +19,6 @@ const products = [
     image: '🧪',
     description: 'Effective against soil pests and termites',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=chlorpyriphos+20+ec+insecticide',
   },
   {
     id: 2,
@@ -32,11 +31,10 @@ const products = [
     image: '💊',
     description: 'For sucking pests like aphids and whitefly',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=imidacloprid+insecticide',
   },
   {
     id: 3,
-    name: 'NPK 10-26-26 Fertilizer',
+    name: 'NPK 10-26-26',
     category: 'Fertilizers',
     price: 1450,
     unit: '50kg',
@@ -45,7 +43,6 @@ const products = [
     image: '🌱',
     description: 'Balanced nutrition for flowering stage',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=npk+fertilizer+10-26-26',
   },
   {
     id: 4,
@@ -58,7 +55,6 @@ const products = [
     image: '🧬',
     description: 'High nitrogen content for vegetative growth',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=urea+fertilizer+agriculture',
   },
   {
     id: 5,
@@ -71,7 +67,6 @@ const products = [
     image: '🪱',
     description: 'Organic, nutrient-rich soil amendment',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=vermicompost+organic',
   },
   {
     id: 6,
@@ -84,7 +79,6 @@ const products = [
     image: '🌿',
     description: 'Natural pest repellent and soil enricher',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=neem+cake+powder+fertilizer',
   },
   {
     id: 7,
@@ -97,7 +91,6 @@ const products = [
     image: '🌾',
     description: 'High yielding, disease resistant variety',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=wheat+seeds+hd+2967',
   },
   {
     id: 8,
@@ -110,7 +103,6 @@ const products = [
     image: '🌻',
     description: 'Early maturing, high oil content',
     inStock: false,
-    amazonLink: 'https://www.amazon.in/s?k=mustard+seeds+agriculture',
   },
   {
     id: 9,
@@ -123,7 +115,6 @@ const products = [
     image: '🔬',
     description: 'Decomposes stubble in 20-25 days',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=bio+decomposer+spray+agriculture',
   },
   {
     id: 10,
@@ -136,332 +127,6 @@ const products = [
     image: '🔧',
     description: 'Manual pressure sprayer for pesticides',
     inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=garden+sprayer+pump+16+litre',
-  },
-  {
-    id: 11,
-    name: 'DAP Fertilizer 18-46-0',
-    category: 'Fertilizers',
-    price: 1350,
-    unit: '50kg',
-    rating: 4.7,
-    reviews: 289,
-    image: '💎',
-    description: 'Di-ammonium phosphate for root development',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=dap+fertilizer+50kg',
-  },
-  {
-    id: 12,
-    name: 'Potash MOP 60%',
-    category: 'Fertilizers',
-    price: 980,
-    unit: '50kg',
-    rating: 4.5,
-    reviews: 167,
-    image: '🧂',
-    description: 'Muriate of potash for fruit quality',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=potash+mop+fertilizer',
-  },
-  {
-    id: 13,
-    name: 'Humic Acid Liquid',
-    category: 'Fertilizers',
-    price: 520,
-    unit: '5L',
-    rating: 4.6,
-    reviews: 134,
-    image: '🫧',
-    description: 'Improves soil structure and nutrient uptake',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=humic+acid+liquid+agriculture',
-  },
-  {
-    id: 14,
-    name: 'Paddy Rice Seeds',
-    category: 'Seeds',
-    price: 1800,
-    unit: '25kg',
-    rating: 4.8,
-    reviews: 245,
-    image: '🍚',
-    description: 'Basmati variety, high yield potential',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=paddy+rice+seeds+basmati',
-  },
-  {
-    id: 15,
-    name: 'Tomato Hybrid Seeds',
-    category: 'Seeds',
-    price: 350,
-    unit: '100g',
-    rating: 4.4,
-    reviews: 189,
-    image: '🍅',
-    description: 'Disease resistant, high yielding hybrid',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=tomato+hybrid+seeds',
-  },
-  {
-    id: 16,
-    name: 'Onion Seeds Black',
-    category: 'Seeds',
-    price: 280,
-    unit: '500g',
-    rating: 4.3,
-    reviews: 112,
-    image: '🧅',
-    description: 'Nasik Red variety, good storage life',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=onion+seeds+nasik+red',
-  },
-  {
-    id: 17,
-    name: 'Neem Oil Pesticide',
-    category: 'Pesticides',
-    price: 380,
-    unit: '1L',
-    rating: 4.6,
-    reviews: 267,
-    image: '🌳',
-    description: 'Organic pest control for all crops',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=neem+oil+pesticide+organic',
-  },
-  {
-    id: 18,
-    name: 'Mancozeb 75% WP',
-    category: 'Pesticides',
-    price: 520,
-    unit: '1kg',
-    rating: 4.5,
-    reviews: 198,
-    image: '🛡️',
-    description: 'Fungicide for blight and leaf spot',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=mancozeb+75+wp+fungicide',
-  },
-  {
-    id: 19,
-    name: 'Carbendazim 50% WP',
-    category: 'Pesticides',
-    price: 290,
-    unit: '500g',
-    rating: 4.4,
-    reviews: 145,
-    image: '💉',
-    description: 'Systemic fungicide for seed treatment',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=carbendazim+50+wp+fungicide',
-  },
-  {
-    id: 20,
-    name: 'Seaweed Extract',
-    category: 'Fertilizers',
-    price: 450,
-    unit: '1L',
-    rating: 4.7,
-    reviews: 178,
-    image: '🌊',
-    description: 'Bio-stimulant for plant growth',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=seaweed+extract+fertilizer',
-  },
-  {
-    id: 21,
-    name: 'Cow Dung Compost',
-    category: 'Compost',
-    price: 320,
-    unit: '25kg',
-    rating: 4.8,
-    reviews: 312,
-    image: '🐄',
-    description: 'Natural organic manure for all crops',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=cow+dung+compost+organic',
-  },
-  {
-    id: 22,
-    name: 'Cocopeat Block',
-    category: 'Compost',
-    price: 180,
-    unit: '5kg',
-    rating: 4.6,
-    reviews: 234,
-    image: '🥥',
-    description: 'Excellent water retention for seedlings',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=cocopeat+block+5kg',
-  },
-  {
-    id: 23,
-    name: 'Bone Meal Fertilizer',
-    category: 'Compost',
-    price: 280,
-    unit: '5kg',
-    rating: 4.5,
-    reviews: 156,
-    image: '🦴',
-    description: 'Organic phosphorus source for roots',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=bone+meal+fertilizer+organic',
-  },
-  {
-    id: 24,
-    name: 'Pruning Shears',
-    category: 'Tools',
-    price: 450,
-    unit: '1pc',
-    rating: 4.4,
-    reviews: 189,
-    image: '✂️',
-    description: 'Sharp bypass pruner for clean cuts',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=pruning+shears+garden',
-  },
-  {
-    id: 25,
-    name: 'Garden Hoe Steel',
-    category: 'Tools',
-    price: 380,
-    unit: '1pc',
-    rating: 4.3,
-    reviews: 134,
-    image: '⛏️',
-    description: 'Heavy duty weeding and cultivating tool',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=garden+hoe+steel+tool',
-  },
-  {
-    id: 26,
-    name: 'Drip Irrigation Kit',
-    category: 'Equipment',
-    price: 2800,
-    unit: '100m',
-    rating: 4.7,
-    reviews: 267,
-    image: '💧',
-    description: 'Complete drip system for 1 acre',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=drip+irrigation+kit+agriculture',
-  },
-  {
-    id: 27,
-    name: 'Mulching Sheet Black',
-    category: 'Equipment',
-    price: 1200,
-    unit: '400m',
-    rating: 4.5,
-    reviews: 189,
-    image: '🎭',
-    description: 'Weed control and moisture retention',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=mulching+sheet+black+agriculture',
-  },
-  {
-    id: 28,
-    name: 'Shade Net 50%',
-    category: 'Equipment',
-    price: 950,
-    unit: '10m',
-    rating: 4.6,
-    reviews: 145,
-    image: '🏕️',
-    description: 'UV stabilized green shade net',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=shade+net+50+percent+green',
-  },
-  {
-    id: 29,
-    name: 'Soil pH Tester',
-    category: 'Tools',
-    price: 650,
-    unit: '1pc',
-    rating: 4.4,
-    reviews: 178,
-    image: '📊',
-    description: 'Digital pH meter for soil testing',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=soil+ph+tester+digital',
-  },
-  {
-    id: 30,
-    name: 'Battery Sprayer 12V',
-    category: 'Equipment',
-    price: 3500,
-    unit: '16L',
-    rating: 4.8,
-    reviews: 312,
-    image: '🔋',
-    description: 'Rechargeable electric sprayer pump',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=battery+sprayer+16+litre+agriculture',
-  },
-  {
-    id: 31,
-    name: 'Chilli Seeds F1 Hybrid',
-    category: 'Seeds',
-    price: 420,
-    unit: '100g',
-    rating: 4.6,
-    reviews: 234,
-    image: '🌶️',
-    description: 'High pungency, heavy bearing variety',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=chilli+seeds+f1+hybrid',
-  },
-  {
-    id: 32,
-    name: 'Cotton BT Seeds',
-    category: 'Seeds',
-    price: 850,
-    unit: '450g',
-    rating: 4.5,
-    reviews: 198,
-    image: '☁️',
-    description: 'Bollworm resistant BT cotton variety',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=bt+cotton+seeds',
-  },
-  {
-    id: 33,
-    name: 'Soybean JS-335 Seeds',
-    category: 'Seeds',
-    price: 1200,
-    unit: '30kg',
-    rating: 4.7,
-    reviews: 156,
-    image: '🫘',
-    description: 'High protein, disease tolerant variety',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=soybean+seeds+js+335',
-  },
-  {
-    id: 34,
-    name: 'Thiamethoxam 25% WG',
-    category: 'Pesticides',
-    price: 780,
-    unit: '250g',
-    rating: 4.6,
-    reviews: 167,
-    image: '⚡',
-    description: 'Systemic insecticide for sucking pests',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=thiamethoxam+25+wg+insecticide',
-  },
-  {
-    id: 35,
-    name: 'Glyphosate 41% SL',
-    category: 'Pesticides',
-    price: 580,
-    unit: '1L',
-    rating: 4.3,
-    reviews: 189,
-    image: '☠️',
-    description: 'Non-selective herbicide for weeds',
-    inStock: true,
-    amazonLink: 'https://www.amazon.in/s?k=glyphosate+41+herbicide',
   },
 ];
 
@@ -513,10 +178,6 @@ const Shop = () => {
     return sum + (product?.price || 0) * item.quantity;
   }, 0);
 
-  const openProductLink = (link: string) => {
-    window.open(link, '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* Header */}
@@ -565,14 +226,6 @@ const Shop = () => {
         <div className="mb-4">
           <PremiumBanner variant="compact" />
         </div>
-
-        {/* Info Banner */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 flex items-center gap-2">
-          <ExternalLink className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <p className="text-xs text-blue-700">
-            Tap on any product to view and buy on Amazon India
-          </p>
-        </div>
         
         <div className="grid grid-cols-2 gap-3">
           {filteredProducts.map((product) => {
@@ -580,13 +233,9 @@ const Shop = () => {
             return (
               <div
                 key={product.id}
-                className="bg-card rounded-2xl p-3 shadow-sm border animate-fade-in cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => openProductLink(product.amazonLink)}
+                className="bg-card rounded-2xl p-3 shadow-sm border animate-fade-in"
               >
-                <div className="flex justify-between items-start">
-                  <div className="text-4xl mb-2">{product.image}</div>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                </div>
+                <div className="text-4xl text-center mb-2">{product.image}</div>
                 <h3 className="font-semibold text-foreground text-sm line-clamp-2 h-10">
                   {product.name}
                 </h3>
@@ -609,15 +258,12 @@ const Shop = () => {
                     <Button
                       size="sm"
                       className="rounded-xl h-8 px-3"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(product.id);
-                      }}
+                      onClick={() => addToCart(product.id)}
                     >
                       <Plus className="w-4 h-4" />
                     </Button>
                   ) : (
-                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => removeFromCart(product.id)}
                         className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center"
