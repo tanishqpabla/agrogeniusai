@@ -21,10 +21,11 @@ export const useGeolocation = () => {
   const reverseGeocode = async (lat: number, lon: number): Promise<string> => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1&accept_language=en`,
         {
           headers: {
             'User-Agent': 'AgroGeniusAI/1.0',
+            'Accept-Language': 'en',
           },
         }
       );
