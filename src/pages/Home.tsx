@@ -149,7 +149,10 @@ const Home = () => {
   const handleUpdateLocation = async () => {
     const result = await getCurrentLocation();
     if (result?.city && user) {
-      updateProfile(user.name, result.city);
+      const locationText = result.state && result.state !== 'Unknown State' 
+        ? `${result.city}, ${result.state}` 
+        : result.city;
+      updateProfile(user.name, locationText);
     }
   };
 
