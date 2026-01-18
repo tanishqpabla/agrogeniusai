@@ -8,17 +8,19 @@ interface GeolocationState {
     longitude: number;
   } | null;
   city: string | null;
+  state: string | null;
 }
 
 export const useGeolocation = () => {
-  const [state, setState] = useState<GeolocationState>({
+  const [geoState, setGeoState] = useState<GeolocationState>({
     loading: false,
     error: null,
     coordinates: null,
     city: null,
+    state: null,
   });
 
-  const reverseGeocode = async (lat: number, lon: number): Promise<string> => {
+  const reverseGeocode = async (lat: number, lon: number): Promise<{ city: string; state: string }> => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1&accept_language=en`,
@@ -41,16 +43,19 @@ export const useGeolocation = () => {
         data.address?.state_district ||
         'Unknown Location';
       
-      return city;
+      // Get state
+      const state = data.address?.state || 'Unknown State';
+      
+      return { city, state };
     } catch (error) {
       console.error('Reverse geocoding error:', error);
-      return 'Unknown Location';
+      return { city: 'Unknown Location', state: 'Unknown State' };
     }
   };
 
   const getCurrentLocation = useCallback(async () => {
     if (!navigator.geolocation) {
-      setState(prev => ({
+      setGeoState(prev => ({
         ...prev,
         error: 'Geolocation is not supported by your browser',
         loading: false,
@@ -58,22 +63,23 @@ export const useGeolocation = () => {
       return null;
     }
 
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setGeoState(prev => ({ ...prev, loading: true, error: null }));
 
-    return new Promise<{ city: string; coordinates: { latitude: number; longitude: number } } | null>((resolve) => {
+    return new Promise<{ city: string; state: string; coordinates: { latitude: number; longitude: number } } | null>((resolve) => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-          const city = await reverseGeocode(latitude, longitude);
+          const { city, state } = await reverseGeocode(latitude, longitude);
           
-          setState({
+          setGeoState({
             loading: false,
             error: null,
             coordinates: { latitude, longitude },
             city,
+            state,
           });
           
-          resolve({ city, coordinates: { latitude, longitude } });
+          resolve({ city, state, coordinates: { latitude, longitude } });
         },
         (error) => {
           let errorMessage = 'Failed to get location';
@@ -89,11 +95,12 @@ export const useGeolocation = () => {
               break;
           }
           
-          setState({
+          setGeoState({
             loading: false,
             error: errorMessage,
             coordinates: null,
             city: null,
+            state: null,
           });
           
           resolve(null);
@@ -108,7 +115,7 @@ export const useGeolocation = () => {
   }, []);
 
   return {
-    ...state,
+    ...geoState,
     getCurrentLocation,
   };
 };
