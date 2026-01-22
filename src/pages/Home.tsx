@@ -154,6 +154,7 @@ const Home = () => {
     setMounted(true);
   }, []);
 
+  const handleUpdateLocation = async () => {
     const result = await getCurrentLocation();
     if (result?.city && user) {
       const locationText = result.state && result.state !== 'Unknown State' 
