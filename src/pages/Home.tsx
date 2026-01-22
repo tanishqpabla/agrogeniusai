@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWeather, getWeatherIcon, getFarmingTip } from '@/hooks/useWeather';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Leaf, 
   Cloud, 
@@ -29,7 +31,7 @@ import {
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { Card, CardContent } from '@/components/ui/card';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const cropOptions = ['Wheat', 'Rice', 'Cotton', 'Sugarcane', 'Mustard'];
 
@@ -139,14 +141,19 @@ const Home = () => {
   const { user, updateProfile } = useAuth();
   const { weather, loading: weatherLoading, error: weatherError } = useWeather(user?.location);
   const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
+  const isMobile = useIsMobile();
   const [selectedCrop, setSelectedCrop] = useState('Wheat');
   const [mounted, setMounted] = useState(false);
+  
+  // Scroll animation refs for mobile
+  const { ref: quickActionsRef, isInView: quickActionsInView } = useScrollAnimation();
+  const { ref: cropSelectorRef, isInView: cropSelectorInView } = useScrollAnimation();
+  const { ref: advisoryCardRef, isInView: advisoryCardInView } = useScrollAnimation();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleUpdateLocation = async () => {
     const result = await getCurrentLocation();
     if (result?.city && user) {
       const locationText = result.state && result.state !== 'Unknown State' 
@@ -335,20 +342,25 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions Grid with Animations */}
-        <div>
+        {/* Quick Actions Grid with Device-Aware Animations */}
+        <div 
+          ref={quickActionsRef}
+          className={isMobile ? `scroll-animate ${quickActionsInView ? 'in-view' : ''}` : ''}
+        >
           <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Actions</h3>
           <div className="grid grid-cols-3 gap-3">
-            {featureCards.map((card) => {
+            {featureCards.map((card, index) => {
               const Icon = card.icon;
               return (
                 <button
                   key={card.path}
                   onClick={() => navigate(card.path)}
-                  className={`bg-card p-4 rounded-2xl flex flex-col items-center gap-2 text-center shadow-sm hover:shadow-lg transition-all duration-300 border-0 group hover:scale-105 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}
-                  style={{ animationDelay: `${card.delay}ms` }}
+                  className={`feature-card bg-card p-4 rounded-2xl flex flex-col items-center gap-2 text-center shadow-sm border-0 group tap-feedback ${
+                    mounted ? 'animate-fade-in' : 'opacity-0'
+                  } ${isMobile ? `stagger-${Math.min(index + 1, 6)}` : ''}`}
+                  style={{ animationDelay: isMobile ? undefined : `${card.delay}ms` }}
                 >
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`feature-icon w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-md`}>
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -362,14 +374,17 @@ const Home = () => {
         </div>
 
         {/* Crop Selector */}
-        <div>
+        <div
+          ref={cropSelectorRef}
+          className={isMobile ? `scroll-animate-left ${cropSelectorInView ? 'in-view' : ''}` : ''}
+        >
           <h3 className="text-sm font-medium text-muted-foreground mb-3">Select Your Crop</h3>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             {cropOptions.map((crop) => (
               <button
                 key={crop}
                 onClick={() => setSelectedCrop(crop)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 tap-feedback btn-hover ${
                   selectedCrop === crop 
                     ? 'bg-primary text-primary-foreground' 
                     : 'bg-card border text-foreground hover:bg-accent'
@@ -382,7 +397,10 @@ const Home = () => {
         </div>
 
         {/* Disease Risk & Crop Advisory Card - Bottom */}
-        <Card className="shadow-md border-0">
+        <Card 
+          ref={advisoryCardRef}
+          className={`shadow-md border-0 hover-lift ${isMobile ? `scroll-animate ${advisoryCardInView ? 'in-view' : ''}` : ''}`}
+        >
           <CardContent className="p-4">
             {/* Disease Risk Badge */}
             <div className="flex items-center justify-between mb-4">
@@ -412,7 +430,7 @@ const Home = () => {
               </p>
               <button
                 onClick={() => navigate('/ask-ai')}
-                className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
+                className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium flex items-center justify-center gap-2 btn-hover btn-tap transition-all duration-200"
               >
                 <Bot className="w-4 h-4" />
                 Ask for detailed advice
