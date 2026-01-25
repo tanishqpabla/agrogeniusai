@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, Language } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Leaf, Phone, ArrowRight, User, MapPin, ChevronDown, Navigation, Loader2, MapPinned } from 'lucide-react';
+import { Phone, ArrowRight, User, MapPin, ChevronDown, Navigation, Loader2, MapPinned } from 'lucide-react';
+import agrogenisLogo from '@/assets/agrogenius-logo.png';
 import { cn } from '@/lib/utils';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import {
@@ -334,8 +335,12 @@ const Login = () => {
 
       {/* Header */}
       <div className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-          <Leaf className="w-10 h-10 text-primary-foreground" />
+        <div className="w-24 h-24 mb-4 animate-fade-in">
+          <img 
+            src={agrogenisLogo} 
+            alt="AgroGenius AI Logo" 
+            className="w-full h-full object-contain drop-shadow-lg"
+          />
         </div>
         <h1 className="text-3xl font-bold text-foreground mb-2">{text.title}</h1>
         <p className="text-muted-foreground text-center">
