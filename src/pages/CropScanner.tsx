@@ -1,9 +1,8 @@
 import { useState, useRef } from 'react';
-import { ArrowLeft, Camera, Upload, Leaf, AlertTriangle, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Camera, Upload, Leaf, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PremiumBanner from '@/components/PremiumBanner';
-
+import PageHeader from '@/components/PageHeader';
 const diseases = [
   {
     name: 'Leaf Blight',
@@ -44,7 +43,6 @@ const diseases = [
 ];
 
 const CropScanner = () => {
-  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -82,17 +80,11 @@ const CropScanner = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary to-agro-leaf p-4 flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="text-primary-foreground">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold text-primary-foreground">Crop Disease Scanner</h1>
-          <p className="text-primary-foreground/80 text-sm">AI-powered leaf analysis</p>
-        </div>
-      </div>
-
+      <PageHeader 
+        title="Crop Disease Scanner"
+        subtitle="AI-powered leaf analysis"
+        gradient="from-primary to-agro-leaf"
+      />
       <div className="p-4 space-y-4">
         {!image ? (
           <>

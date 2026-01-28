@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Wheat, Droplets, Sun, Sprout, CheckCircle2 } from 'lucide-react';
+import { Wheat, Droplets, Sun, Sprout, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -11,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import PremiumBanner from '@/components/PremiumBanner';
+import PageHeader from '@/components/PageHeader';
 
 const soilTypes = [
   { value: 'clay', label: 'Clay Soil (चिकनी मिट्टी)' },
@@ -106,7 +106,6 @@ const getCropRecommendations = (soil: string, season: string, water: string): Cr
 };
 
 const CropRecommendation = () => {
-  const navigate = useNavigate();
   const [soilType, setSoilType] = useState('');
   const [season, setSeason] = useState('');
   const [water, setWater] = useState('');
@@ -125,29 +124,17 @@ const CropRecommendation = () => {
 
   return (
     <div className="min-h-screen bg-background pb-6">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-agro-leaf to-primary p-4 pb-6 rounded-b-3xl">
-        <div className="flex items-center gap-3 mb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-primary-foreground hover:bg-primary-foreground/20"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold text-primary-foreground">Crop Recommendation</h1>
-            <p className="text-primary-foreground/80 text-sm">फसल अनुशंसा</p>
-          </div>
-        </div>
-        <div className="bg-primary-foreground/10 rounded-xl p-3 backdrop-blur-sm">
+      <PageHeader 
+        title="Crop Recommendation"
+        subtitle="फसल अनुशंसा"
+        gradient="from-agro-leaf to-primary"
+      >
+        <div className="bg-primary-foreground/10 rounded-xl p-3 backdrop-blur-sm mt-2">
           <p className="text-primary-foreground text-sm">
             🌱 Tell us about your land and we'll suggest the best crops for maximum yield!
           </p>
         </div>
-      </div>
-
+      </PageHeader>
       <div className="p-4 space-y-4">
         {/* Input Section */}
         <Card className="border-0 shadow-lg">

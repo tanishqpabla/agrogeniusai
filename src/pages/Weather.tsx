@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Cloud, Sun, CloudRain, Wind, Droplets, Thermometer, Loader2, AlertTriangle, Sprout, Droplet, Bug, Wheat } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Cloud, Sun, CloudRain, Wind, Droplets, Thermometer, Loader2, AlertTriangle, Sprout, Droplet, Bug, Wheat } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth, Language } from '@/contexts/AuthContext';
 import { useWeather, getWeatherIcon } from '@/hooks/useWeather';
+import PageHeader from '@/components/PageHeader';
 
 const districts = [
   'Hisar', 'Karnal', 'Panipat', 'Rohtak', 'Ambala', 
@@ -376,7 +376,6 @@ const getWeatherAlert = (weather: { temp: number; humidity: number; wind_speed: 
 };
 
 const Weather = () => {
-  const navigate = useNavigate();
   const { t, lang } = useTranslation();
   const { user } = useAuth();
   const text = pageTranslations[lang] || pageTranslations.en;
@@ -390,31 +389,25 @@ const Weather = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-agro-sky to-blue-400 p-4">
-        <div className="flex items-center gap-4 mb-4">
-          <button onClick={() => navigate(-1)} className="text-white">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-white">{text.title}</h1>
-            <p className="text-white/80 text-sm">{text.subtitle}</p>
-          </div>
-        </div>
-
+      <PageHeader 
+        title={text.title}
+        subtitle={text.subtitle}
+        gradient="from-agro-sky to-blue-400"
+      >
         {/* Location Selector */}
-        <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-          <SelectTrigger className="bg-white/20 border-white/30 text-white rounded-xl h-12">
-            <SelectValue placeholder={text.selectDistrict} />
-          </SelectTrigger>
-          <SelectContent className="bg-card">
-            {districts.map((district) => (
-              <SelectItem key={district} value={district}>{district}, Haryana</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
+        <div className="mt-2">
+          <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+            <SelectTrigger className="bg-white/20 border-white/30 text-white rounded-xl h-12">
+              <SelectValue placeholder={text.selectDistrict} />
+            </SelectTrigger>
+            <SelectContent className="bg-card">
+              {districts.map((district) => (
+                <SelectItem key={district} value={district}>{district}, Haryana</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </PageHeader>
       <div className="p-4 space-y-4 -mt-2">
         {/* Loading State */}
         {loading && (

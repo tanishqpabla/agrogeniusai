@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ArrowLeft, Sprout, Droplets, Leaf, Sun, Recycle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Sprout, Droplets, Leaf, Sun, Recycle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import PremiumBanner from '@/components/PremiumBanner';
+import PageHeader from '@/components/PageHeader';
 
 const soilTypes = ['Clay', 'Sandy', 'Loamy', 'Black (Regur)', 'Red Soil', 'Alluvial'];
 const crops = ['Wheat', 'Rice', 'Cotton', 'Mustard', 'Sugarcane', 'Maize', 'Vegetables'];
@@ -34,7 +34,6 @@ const recommendations = {
 };
 
 const SoilHealth = () => {
-  const navigate = useNavigate();
   const [soilType, setSoilType] = useState('');
   const [crop, setCrop] = useState('');
   const [landSize, setLandSize] = useState('');
@@ -48,19 +47,11 @@ const SoilHealth = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-agro-earth to-amber-600 p-4">
-        <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="text-white">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-white">Soil Health Insights</h1>
-            <p className="text-white/80 text-sm">Smart fertilizer & irrigation advice</p>
-          </div>
-        </div>
-      </div>
-
+      <PageHeader 
+        title="Soil Health Insights"
+        subtitle="Smart fertilizer & irrigation advice"
+        gradient="from-agro-earth to-amber-600"
+      />
       <div className="p-4 space-y-4">
         {/* Input Form */}
         <div className="bg-card rounded-2xl p-4 shadow-sm border space-y-4">
