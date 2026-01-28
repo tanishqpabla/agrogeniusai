@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, Crown, Zap, Star, Smartphone } from 'lucide-react';
+import { Check, Crown, Zap, Star, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import PageHeader from '@/components/PageHeader';
 
 const plans = [
   {
@@ -75,33 +75,18 @@ const plans = [
 ];
 
 const Pricing = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const isHindi = user?.language === 'hi';
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-primary to-agro-leaf p-6 rounded-b-3xl">
-        <div className="flex items-center gap-4 mb-4">
-          <button 
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center"
-          >
-            <ArrowLeft className="w-5 h-5 text-primary-foreground" />
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-primary-foreground">
-              {isHindi ? 'प्रीमियम में अपग्रेड करें' : 'Upgrade to Premium'}
-            </h1>
-            <p className="text-primary-foreground/80 text-sm">
-              {isHindi ? 'अधिक सुविधाएं अनलॉक करें' : 'Unlock more features'}
-            </p>
-          </div>
-        </div>
-
+      <PageHeader 
+        title={isHindi ? 'प्रीमियम में अपग्रेड करें' : 'Upgrade to Premium'}
+        subtitle={isHindi ? 'अधिक सुविधाएं अनलॉक करें' : 'Unlock more features'}
+        gradient="from-primary to-agro-leaf"
+      >
         {/* Hero */}
-        <div className="bg-primary-foreground/10 rounded-2xl p-4 backdrop-blur-sm text-center">
+        <div className="bg-primary-foreground/10 rounded-2xl p-4 backdrop-blur-sm text-center mt-2">
           <Zap className="w-10 h-10 text-accent mx-auto mb-2" />
           <p className="text-primary-foreground text-sm">
             {isHindi 
@@ -109,8 +94,7 @@ const Pricing = () => {
               : '🌾 Supercharge your farming with Premium!'}
           </p>
         </div>
-      </div>
-
+      </PageHeader>
       {/* Pricing Cards */}
       <div className="p-4 space-y-4">
         {plans.map((plan, index) => {

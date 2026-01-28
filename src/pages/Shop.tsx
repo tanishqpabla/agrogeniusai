@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Star, ExternalLink } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, Star, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PremiumBanner from '@/components/PremiumBanner';
+import PageHeader from '@/components/PageHeader';
 
 const categories = ['All', 'Pesticides', 'Fertilizers', 'Seeds', 'Compost', 'Tools', 'Equipment'];
 
@@ -382,7 +382,6 @@ const products: Product[] = [
 ];
 
 const Shop = () => {
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   const filteredProducts = selectedCategory === 'All' 
@@ -404,23 +403,13 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary to-agro-leaf p-4 sticky top-0 z-40">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate(-1)} className="text-white">
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <div>
-              <h1 className="text-xl font-bold text-white">Agri Shop</h1>
-              <p className="text-white/80 text-sm">Quality farming products</p>
-            </div>
-          </div>
-          <ShoppingCart className="w-6 h-6 text-white" />
-        </div>
-
+      <PageHeader 
+        title="Agri Shop"
+        subtitle="Quality farming products"
+        gradient="from-primary to-agro-leaf"
+      >
         {/* Category Pills */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mt-2">
           {categories.map((cat) => (
             <button
               key={cat}
@@ -435,8 +424,7 @@ const Shop = () => {
             </button>
           ))}
         </div>
-      </div>
-
+      </PageHeader>
       {/* Products Grid */}
       <div className="p-4">
         {/* Premium Banner */}

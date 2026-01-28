@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, 
   Landmark, 
   IndianRupee, 
   Shield, 
@@ -18,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PremiumBanner from '@/components/PremiumBanner';
+import PageHeader from '@/components/PageHeader';
 
 interface Scheme {
   id: string;
@@ -184,7 +183,6 @@ const categoryLabels = {
 };
 
 const GovSchemes = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
   const filteredSchemes = activeTab === 'all' 
@@ -204,25 +202,13 @@ const GovSchemes = () => {
 
   return (
     <div className="min-h-screen bg-background pb-6">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-amber-600 to-orange-500 p-4 pb-6 rounded-b-3xl">
-        <div className="flex items-center gap-3 mb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-primary-foreground hover:bg-primary-foreground/20"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold text-primary-foreground">Government Schemes</h1>
-            <p className="text-primary-foreground/80 text-sm">सरकारी योजनाएं</p>
-          </div>
-        </div>
-        
+      <PageHeader 
+        title="Government Schemes"
+        subtitle="सरकारी योजनाएं"
+        gradient="from-amber-600 to-orange-500"
+      >
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 mt-2">
           <div className="bg-primary-foreground/10 rounded-xl p-3 text-center backdrop-blur-sm">
             <p className="text-2xl font-bold text-primary-foreground">{schemes.length}</p>
             <p className="text-xs text-primary-foreground/80">Active Schemes</p>
@@ -236,8 +222,7 @@ const GovSchemes = () => {
             <p className="text-xs text-primary-foreground/80">KCC Interest</p>
           </div>
         </div>
-      </div>
-
+      </PageHeader>
       <div className="p-4 space-y-4">
         {/* Category Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

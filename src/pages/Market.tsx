@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PremiumBanner from '@/components/PremiumBanner';
+import PageHeader from '@/components/PageHeader';
 
 const crops = ['Wheat', 'Rice (Paddy)', 'Cotton', 'Mustard', 'Sugarcane', 'Maize'];
 const mandis = [
@@ -149,7 +149,6 @@ const priceData: Record<string, Record<string, { min: number; max: number; modal
 };
 
 const Market = () => {
-  const navigate = useNavigate();
   const [selectedCrop, setSelectedCrop] = useState('Wheat');
   const [selectedMandi, setSelectedMandi] = useState('Hisar Mandi');
 
@@ -167,20 +166,13 @@ const Market = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-500 p-4">
-        <div className="flex items-center gap-4 mb-4">
-          <button onClick={() => navigate(-1)} className="text-white">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-white">Market Prices</h1>
-            <p className="text-white/80 text-sm">Today's mandi rates</p>
-          </div>
-        </div>
-
+      <PageHeader 
+        title="Market Prices"
+        subtitle="Today's mandi rates"
+        gradient="from-purple-600 to-pink-500"
+      >
         {/* Selectors */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mt-2">
           <Select value={selectedCrop} onValueChange={setSelectedCrop}>
             <SelectTrigger className="bg-white/20 border-white/30 text-white rounded-xl h-12">
               <SelectValue placeholder="Select Crop" />
@@ -203,8 +195,7 @@ const Market = () => {
             </SelectContent>
           </Select>
         </div>
-      </div>
-
+      </PageHeader>
       <div className="p-4 space-y-4">
         {/* Current Price Card */}
         {currentPrice && (

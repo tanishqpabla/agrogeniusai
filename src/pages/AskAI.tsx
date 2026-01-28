@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Bot, User, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { VoiceInput } from '@/components/VoiceInput';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Language } from '@/contexts/AuthContext';
 import PremiumBanner from '@/components/PremiumBanner';
+import PageHeader from '@/components/PageHeader';
 
 interface Message {
   id: string;
@@ -239,7 +239,6 @@ How else can I help you today?`;
 };
 
 const AskAI = () => {
-  const navigate = useNavigate();
   const { t, lang } = useTranslation();
   const text = pageTranslations[lang] || pageTranslations.en;
   
@@ -291,22 +290,11 @@ const AskAI = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-teal-500 to-primary p-4 flex items-center gap-4 sticky top-0 z-40">
-        <button onClick={() => navigate(-1)} className="text-white">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Bot className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white">{text.title}</h1>
-            <p className="text-white/80 text-xs">{text.subtitle}</p>
-          </div>
-        </div>
-      </div>
-
+      <PageHeader 
+        title={text.title}
+        subtitle={text.subtitle}
+        gradient="from-teal-500 to-primary"
+      />
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 pb-32">
         {messages.length === 0 ? (
