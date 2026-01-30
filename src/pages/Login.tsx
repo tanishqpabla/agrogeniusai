@@ -55,6 +55,8 @@ const translations: Record<Language, {
   allowLocation: string;
   manualEntry: string;
   detectingLocation: string;
+  continueAsGuest: string;
+  orLoginWith: string;
 }> = {
   en: {
     title: 'AgroGenius AI',
@@ -80,6 +82,8 @@ const translations: Record<Language, {
     allowLocation: 'Allow Location',
     manualEntry: 'Enter Manually',
     detectingLocation: 'Detecting your location...',
+    continueAsGuest: 'Continue as Guest',
+    orLoginWith: 'Or login with your details',
   },
   hi: {
     title: 'एग्रोजीनियस AI',
@@ -105,6 +109,8 @@ const translations: Record<Language, {
     allowLocation: 'स्थान की अनुमति दें',
     manualEntry: 'मैन्युअल रूप से दर्ज करें',
     detectingLocation: 'आपका स्थान पता लगाया जा रहा है...',
+    continueAsGuest: 'अतिथि के रूप में जारी रखें',
+    orLoginWith: 'या अपने विवरण से लॉगिन करें',
   },
   pa: {
     title: 'ਐਗਰੋਜੀਨੀਅਸ AI',
@@ -130,6 +136,8 @@ const translations: Record<Language, {
     allowLocation: 'ਸਥਾਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ',
     manualEntry: 'ਹੱਥੀਂ ਦਾਖਲ ਕਰੋ',
     detectingLocation: 'ਤੁਹਾਡਾ ਸਥਾਨ ਲੱਭਿਆ ਜਾ ਰਿਹਾ ਹੈ...',
+    continueAsGuest: 'ਮਹਿਮਾਨ ਵਜੋਂ ਜਾਰੀ ਰੱਖੋ',
+    orLoginWith: 'ਜਾਂ ਆਪਣੇ ਵੇਰਵਿਆਂ ਨਾਲ ਲੌਗਇਨ ਕਰੋ',
   },
   mr: {
     title: 'ॲग्रोजीनियस AI',
@@ -155,6 +163,8 @@ const translations: Record<Language, {
     allowLocation: 'स्थान परवानगी द्या',
     manualEntry: 'मॅन्युअली प्रविष्ट करा',
     detectingLocation: 'तुमचे स्थान शोधत आहे...',
+    continueAsGuest: 'अतिथी म्हणून सुरू ठेवा',
+    orLoginWith: 'किंवा तुमच्या तपशीलांसह लॉगिन करा',
   },
   ta: {
     title: 'அக்ரோஜீனியஸ் AI',
@@ -180,6 +190,8 @@ const translations: Record<Language, {
     allowLocation: 'இருப்பிடத்தை அனுமதி',
     manualEntry: 'கைமுறையாக உள்ளிடவும்',
     detectingLocation: 'உங்கள் இருப்பிடம் கண்டறியப்படுகிறது...',
+    continueAsGuest: 'விருந்தினராக தொடரவும்',
+    orLoginWith: 'அல்லது உங்கள் விவரங்களுடன் உள்நுழையுங்கள்',
   },
   te: {
     title: 'అగ్రోజీనియస్ AI',
@@ -205,6 +217,8 @@ const translations: Record<Language, {
     allowLocation: 'స్థానం అనుమతించండి',
     manualEntry: 'మాన్యువల్‌గా నమోదు చేయండి',
     detectingLocation: 'మీ స్థానం గుర్తించబడుతోంది...',
+    continueAsGuest: 'అతిథిగా కొనసాగించండి',
+    orLoginWith: 'లేదా మీ వివరాలతో లాగిన్ అవ్వండి',
   },
   bn: {
     title: 'অ্যাগ্রোজিনিয়াস AI',
@@ -230,6 +244,8 @@ const translations: Record<Language, {
     allowLocation: 'অবস্থান অনুমতি দিন',
     manualEntry: 'ম্যানুয়ালি লিখুন',
     detectingLocation: 'আপনার অবস্থান সনাক্ত করা হচ্ছে...',
+    continueAsGuest: 'অতিথি হিসাবে চালিয়ে যান',
+    orLoginWith: 'অথবা আপনার বিবরণ দিয়ে লগইন করুন',
   },
 };
 
@@ -242,7 +258,7 @@ const Login = () => {
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginAsGuest } = useAuth();
   const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
 
   const text = translations[language];
@@ -304,6 +320,11 @@ const Login = () => {
     navigate('/home');
   };
 
+  const handleGuestLogin = () => {
+    loginAsGuest(language);
+    navigate('/home');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-agro-green-light to-background flex flex-col">
       {/* Language Dropdown */}
@@ -350,7 +371,25 @@ const Login = () => {
 
       {/* Login Form */}
       <div className="bg-card rounded-t-3xl p-6 shadow-lg animate-slide-up">
-        <h2 className="text-xl font-semibold mb-6 text-center">
+        {/* Guest Login Button - Prominent at top */}
+        <Button 
+          type="button"
+          variant="outline"
+          onClick={handleGuestLogin}
+          className="w-full h-14 text-lg rounded-xl gap-2 mb-4 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5"
+        >
+          <User className="w-5 h-5" />
+          {text.continueAsGuest}
+        </Button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-sm text-muted-foreground">{text.orLoginWith}</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        <h2 className="text-xl font-semibold mb-4 text-center">
           {text.loginTitle}
         </h2>
 
