@@ -12,7 +12,9 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isGuest: boolean;
   login: (phone: string, name: string, location: string, language: Language) => void;
+  loginAsGuest: (language: Language) => void;
   logout: () => void;
   updateProfile: (name: string, location: string) => void;
   updateLanguage: (language: Language) => void;
@@ -39,6 +41,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('agrogenius_user', JSON.stringify(newUser));
   };
 
+  const loginAsGuest = (language: Language) => {
+    const guestUser = {
+      phone: '',
+      name: 'Guest',
+      location: 'India',
+      language,
+    };
+    setUser(guestUser);
+    localStorage.setItem('agrogenius_user', JSON.stringify(guestUser));
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('agrogenius_user');
@@ -60,8 +73,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const isGuest = user?.phone === '';
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, updateProfile, updateLanguage }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isGuest, login, loginAsGuest, logout, updateProfile, updateLanguage }}>
       {children}
     </AuthContext.Provider>
   );
