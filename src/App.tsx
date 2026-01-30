@@ -23,7 +23,7 @@ import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient();
 
-// Protected route wrapper
+// Protected route wrapper - must be used inside AuthProvider
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
@@ -70,16 +70,21 @@ const AppRoutes = () => (
   </Routes>
 );
 
+// Wrapper that ensures routes are rendered inside AuthProvider
+const AppWithAuth = () => (
+  <AuthProvider>
+    <Toaster />
+    <Sonner />
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  </AuthProvider>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </AuthProvider>
+      <AppWithAuth />
     </TooltipProvider>
   </QueryClientProvider>
 );
