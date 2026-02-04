@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useWeather, getWeatherIcon, getFarmingTip } from '@/hooks/useWeather';
+import { useWeather, getFarmingTip } from '@/hooks/useWeather';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Leaf, 
   Cloud, 
@@ -31,124 +29,107 @@ import {
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { Card, CardContent } from '@/components/ui/card';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 const cropOptions = ['Wheat', 'Rice', 'Cotton', 'Sugarcane', 'Mustard'];
 
-// Feature icons with animations
 const featureCards = [
   {
     icon: Leaf,
     title: 'Crop Scanner',
     description: 'Scan for diseases',
-    path: '/scan',
+    path: '/app/scan',
     gradient: 'from-green-500 to-emerald-600',
-    delay: 0,
   },
   {
     icon: Cloud,
     title: 'Weather',
     description: 'Farming tips',
-    path: '/weather',
+    path: '/app/weather',
     gradient: 'from-blue-500 to-cyan-600',
-    delay: 50,
   },
   {
     icon: Sprout,
     title: 'Soil Health',
     description: 'Fertilizer tips',
-    path: '/soil',
+    path: '/app/soil',
     gradient: 'from-amber-500 to-orange-600',
-    delay: 100,
   },
   {
     icon: TrendingUp,
     title: 'Mandi Prices',
-    description: 'Today\'s rates',
-    path: '/market',
+    description: "Today's rates",
+    path: '/app/market',
     gradient: 'from-purple-500 to-violet-600',
-    delay: 150,
   },
   {
     icon: Bot,
     title: 'Ask AI',
     description: 'Get advice',
-    path: '/ask-ai',
+    path: '/app/ask-ai',
     gradient: 'from-rose-500 to-pink-600',
-    delay: 200,
   },
   {
     icon: Wheat,
     title: 'Crop Guide',
     description: 'Best crops',
-    path: '/crop-recommendation',
+    path: '/app/crop-recommendation',
     gradient: 'from-yellow-500 to-amber-600',
-    delay: 250,
   },
   {
     icon: Landmark,
     title: 'Schemes',
     description: 'Subsidies',
-    path: '/gov-schemes',
+    path: '/app/gov-schemes',
     gradient: 'from-teal-500 to-cyan-600',
-    delay: 300,
   },
   {
     icon: ShoppingBag,
     title: 'Shop',
     description: 'Seeds & tools',
-    path: '/shop',
+    path: '/app/shop',
     gradient: 'from-indigo-500 to-blue-600',
-    delay: 350,
   },
   {
     icon: Flame,
     title: 'Parali',
     description: 'Stubble tips',
-    path: '/parali',
+    path: '/app/parali',
     gradient: 'from-red-500 to-orange-600',
-    delay: 400,
   },
 ];
 
-// Weather animation icons
-const getAnimatedWeatherIcon = (iconCode: string) => {
-  const iconMap: Record<string, { icon: typeof Sun; color: string; animation: string }> = {
-    '01d': { icon: Sun, color: 'text-yellow-500', animation: 'animate-pulse-gentle' },
-    '01n': { icon: Sun, color: 'text-blue-300', animation: 'animate-pulse-gentle' },
-    '02d': { icon: CloudSun, color: 'text-amber-500', animation: 'animate-fade-in' },
-    '02n': { icon: Cloud, color: 'text-gray-400', animation: 'animate-fade-in' },
-    '03d': { icon: Cloud, color: 'text-gray-500', animation: 'animate-fade-in' },
-    '03n': { icon: Cloud, color: 'text-gray-500', animation: 'animate-fade-in' },
-    '04d': { icon: Cloud, color: 'text-gray-600', animation: 'animate-fade-in' },
-    '04n': { icon: Cloud, color: 'text-gray-600', animation: 'animate-fade-in' },
-    '09d': { icon: CloudRain, color: 'text-blue-500', animation: 'animate-pulse-gentle' },
-    '09n': { icon: CloudRain, color: 'text-blue-500', animation: 'animate-pulse-gentle' },
-    '10d': { icon: CloudRain, color: 'text-blue-600', animation: 'animate-pulse-gentle' },
-    '10n': { icon: CloudRain, color: 'text-blue-600', animation: 'animate-pulse-gentle' },
-    '11d': { icon: CloudLightning, color: 'text-yellow-600', animation: 'animate-pulse' },
-    '11n': { icon: CloudLightning, color: 'text-yellow-600', animation: 'animate-pulse' },
-    '13d': { icon: Snowflake, color: 'text-cyan-400', animation: 'animate-pulse-gentle' },
-    '13n': { icon: Snowflake, color: 'text-cyan-400', animation: 'animate-pulse-gentle' },
-    '50d': { icon: CloudFog, color: 'text-gray-400', animation: 'animate-fade-in' },
-    '50n': { icon: CloudFog, color: 'text-gray-400', animation: 'animate-fade-in' },
+const getWeatherIcon = (iconCode: string) => {
+  const iconMap: Record<string, { icon: typeof Sun; color: string }> = {
+    '01d': { icon: Sun, color: 'text-yellow-500' },
+    '01n': { icon: Sun, color: 'text-blue-300' },
+    '02d': { icon: CloudSun, color: 'text-amber-500' },
+    '02n': { icon: Cloud, color: 'text-gray-400' },
+    '03d': { icon: Cloud, color: 'text-gray-500' },
+    '03n': { icon: Cloud, color: 'text-gray-500' },
+    '04d': { icon: Cloud, color: 'text-gray-600' },
+    '04n': { icon: Cloud, color: 'text-gray-600' },
+    '09d': { icon: CloudRain, color: 'text-blue-500' },
+    '09n': { icon: CloudRain, color: 'text-blue-500' },
+    '10d': { icon: CloudRain, color: 'text-blue-600' },
+    '10n': { icon: CloudRain, color: 'text-blue-600' },
+    '11d': { icon: CloudLightning, color: 'text-yellow-600' },
+    '11n': { icon: CloudLightning, color: 'text-yellow-600' },
+    '13d': { icon: Snowflake, color: 'text-cyan-400' },
+    '13n': { icon: Snowflake, color: 'text-cyan-400' },
+    '50d': { icon: CloudFog, color: 'text-gray-400' },
+    '50n': { icon: CloudFog, color: 'text-gray-400' },
   };
-  return iconMap[iconCode] || { icon: Sun, color: 'text-yellow-500', animation: 'animate-pulse-gentle' };
+  return iconMap[iconCode] || { icon: Sun, color: 'text-yellow-500' };
 };
 
 const Home = () => {
   const navigate = useNavigate();
   const { user, updateProfile } = useAuth();
-  const { weather, loading: weatherLoading, error: weatherError } = useWeather(user?.location);
+  const { weather, loading: weatherLoading } = useWeather(user?.location);
   const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
-  const isMobile = useIsMobile();
   const [selectedCrop, setSelectedCrop] = useState('Wheat');
   const [mounted, setMounted] = useState(false);
-  
-  // Scroll animation refs for mobile
-  const { ref: quickActionsRef, isInView: quickActionsInView } = useScrollAnimation();
-  const { ref: cropSelectorRef, isInView: cropSelectorInView } = useScrollAnimation();
-  const { ref: advisoryCardRef, isInView: advisoryCardInView } = useScrollAnimation();
 
   useEffect(() => {
     setMounted(true);
@@ -164,7 +145,6 @@ const Home = () => {
     }
   };
 
-  // Calculate disease risk based on weather conditions
   const getDiseaseRisk = () => {
     if (!weather) return { level: 'unknown', text: 'Loading...', color: 'bg-muted', textColor: 'text-muted-foreground' };
     const humidity = weather.current.humidity;
@@ -180,7 +160,6 @@ const Home = () => {
 
   const diseaseRisk = getDiseaseRisk();
 
-  // Generate advisory based on weather and crop
   const getAdvisory = () => {
     if (!weather) return 'Loading advisory...';
     const temp = weather.current.temp;
@@ -200,7 +179,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background pb-4">
-      {/* Header - Compact */}
+      {/* Header */}
       <div className="bg-primary px-5 pt-5 pb-4">
         <div className="flex items-center justify-between">
           <div>
@@ -218,8 +197,8 @@ const Home = () => {
       </div>
 
       <div className="px-4 space-y-4 -mt-2">
-        {/* Location Strip with GPS Button */}
-        <Card className="shadow-sm border-0 animate-fade-in">
+        {/* Location Strip */}
+        <Card className="shadow-sm border-0">
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -229,7 +208,7 @@ const Home = () => {
               <button
                 onClick={handleUpdateLocation}
                 disabled={gpsLoading}
-                className="flex items-center gap-1 text-xs text-primary hover:bg-primary/10 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-primary px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
               >
                 {gpsLoading ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -242,8 +221,8 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        {/* Weather Advisory - Main Card */}
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-primary/5 to-accent/30 overflow-hidden animate-fade-in">
+        {/* Weather Advisory Card */}
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-primary/5 to-accent/30 overflow-hidden">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -256,8 +235,8 @@ const Home = () => {
                 </span>
               </div>
               <button 
-                onClick={() => navigate('/weather')}
-                className="text-xs text-primary flex items-center gap-1 hover:underline transition-all"
+                onClick={() => navigate('/app/weather')}
+                className="text-xs text-primary flex items-center gap-1"
               >
                 Details <ChevronRight className="w-3 h-3" />
               </button>
@@ -273,12 +252,10 @@ const Home = () => {
                   <div className="flex items-center gap-3">
                     <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                       {(() => {
-                        const weatherIcon = getAnimatedWeatherIcon(weather.current.icon);
+                        const weatherIcon = getWeatherIcon(weather.current.icon);
                         const WeatherIconComponent = weatherIcon.icon;
                         return (
-                          <WeatherIconComponent 
-                            className={`w-8 h-8 ${weatherIcon.color} ${weatherIcon.animation}`} 
-                          />
+                          <WeatherIconComponent className={`w-8 h-8 ${weatherIcon.color}`} />
                         );
                       })()}
                     </div>
@@ -305,13 +282,12 @@ const Home = () => {
                     <h4 className="text-xs font-medium text-muted-foreground mb-2">7-Day Forecast</h4>
                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                       {weather.forecast.slice(0, 7).map((day, index) => {
-                        const dayWeatherIcon = getAnimatedWeatherIcon(day.icon);
+                        const dayWeatherIcon = getWeatherIcon(day.icon);
                         const DayIconComponent = dayWeatherIcon.icon;
                         return (
                           <div 
                             key={index}
-                            className="flex-shrink-0 flex flex-col items-center p-2 bg-card/60 rounded-xl min-w-[60px] hover:bg-card transition-colors"
-                            style={{ animationDelay: `${index * 50}ms` }}
+                            className="flex-shrink-0 flex flex-col items-center p-2 bg-card/60 rounded-xl min-w-[60px]"
                           >
                             <span className="text-[10px] font-medium text-muted-foreground">{day.dayName}</span>
                             <DayIconComponent className={`w-5 h-5 my-1 ${dayWeatherIcon.color}`} />
@@ -343,25 +319,21 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions Grid with Device-Aware Animations */}
-        <div 
-          ref={quickActionsRef}
-          className={isMobile ? `scroll-animate ${quickActionsInView ? 'in-view' : ''}` : ''}
-        >
+        {/* Quick Actions Grid - No animations */}
+        <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Actions</h3>
           <div className="grid grid-cols-3 gap-3">
-            {featureCards.map((card, index) => {
+            {featureCards.map((card) => {
               const Icon = card.icon;
               return (
                 <button
                   key={card.path}
                   onClick={() => navigate(card.path)}
-                  className={`feature-card bg-card p-4 rounded-2xl flex flex-col items-center gap-2 text-center shadow-sm border-0 group tap-feedback ${
-                    mounted ? 'animate-fade-in' : 'opacity-0'
-                  } ${isMobile ? `stagger-${Math.min(index + 1, 6)}` : ''}`}
-                  style={{ animationDelay: isMobile ? undefined : `${card.delay}ms` }}
+                  className={`bg-card p-4 rounded-2xl flex flex-col items-center gap-2 text-center shadow-sm border-0 active:scale-95 transition-transform ${
+                    mounted ? 'opacity-100' : 'opacity-0'
+                  }`}
                 >
-                  <div className={`feature-icon w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-md`}>
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-md`}>
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -375,20 +347,17 @@ const Home = () => {
         </div>
 
         {/* Crop Selector */}
-        <div
-          ref={cropSelectorRef}
-          className={isMobile ? `scroll-animate-left ${cropSelectorInView ? 'in-view' : ''}` : ''}
-        >
+        <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-3">Select Your Crop</h3>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             {cropOptions.map((crop) => (
               <button
                 key={crop}
                 onClick={() => setSelectedCrop(crop)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 tap-feedback btn-hover ${
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedCrop === crop 
                     ? 'bg-primary text-primary-foreground' 
-                    : 'bg-card border text-foreground hover:bg-accent'
+                    : 'bg-card border text-foreground'
                 }`}
               >
                 {crop}
@@ -397,11 +366,8 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Disease Risk & Crop Advisory Card - Bottom */}
-        <Card 
-          ref={advisoryCardRef}
-          className={`shadow-md border-0 hover-lift ${isMobile ? `scroll-animate ${advisoryCardInView ? 'in-view' : ''}` : ''}`}
-        >
+        {/* Disease Risk & Crop Advisory Card */}
+        <Card className="shadow-md border-0">
           <CardContent className="p-4">
             {/* Disease Risk Badge */}
             <div className="flex items-center justify-between mb-4">
@@ -426,17 +392,9 @@ const Home = () => {
                   <span className="font-medium text-foreground">{selectedCrop} Advisory</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {getAdvisory()}
               </p>
-              <button
-                onClick={() => navigate('/ask-ai')}
-                className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium flex items-center justify-center gap-2 btn-hover btn-tap transition-all duration-200"
-              >
-                <Bot className="w-4 h-4" />
-                Ask for detailed advice
-                <ChevronRight className="w-4 h-4" />
-              </button>
             </div>
           </CardContent>
         </Card>

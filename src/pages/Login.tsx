@@ -259,16 +259,14 @@ const Login = () => {
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const navigate = useNavigate();
   const { login, loginAsGuest } = useAuth();
-  const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
+  const { getCurrentLocation } = useGeolocation();
 
   const text = translations[language];
   const currentLang = languages.find(l => l.code === language) || languages[0];
 
-  // Show location permission dialog on mount
   useEffect(() => {
     const hasAskedLocation = sessionStorage.getItem('locationAsked');
     if (!hasAskedLocation) {
-      // Small delay to let page render first
       const timer = setTimeout(() => {
         setShowLocationDialog(true);
       }, 500);
@@ -294,220 +292,207 @@ const Login = () => {
     sessionStorage.setItem('locationAsked', 'true');
   };
 
-  const handleDetectLocation = async () => {
-    const result = await getCurrentLocation();
-    if (result?.city) {
-      setLocation(result.city);
-    }
+  const handleGuestLogin = () => {
+    loginAsGuest(language);
+    navigate('/app');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (phone.length !== 10) {
-      setError(text.invalidPhone);
-      return;
-    }
+  const handleSubmit = () => {
+    setError('');
+    
     if (!fullName.trim()) {
       setError(text.enterName);
       return;
     }
+    
     if (!location.trim()) {
       setError(text.enterLocation);
       return;
     }
-    setError('');
-    login(phone, fullName.trim(), location.trim(), language);
-    navigate('/home');
-  };
-
-  const handleGuestLogin = () => {
-    loginAsGuest(language);
-    navigate('/home');
+    
+    if (phone.length !== 10) {
+      setError(text.invalidPhone);
+      return;
+    }
+    
+    login(phone, fullName, location, language);
+    navigate('/app');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-agro-green-light to-background flex flex-col">
-      {/* Language Dropdown */}
-      <div className="absolute top-4 right-4 z-10">
+    <div className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background flex flex-col">
+      {/* Header with Language Selector */}
+      <div className="p-4 flex justify-between items-center">
+        <button 
+          onClick={() => navigate('/')}
+          className="text-sm text-muted-foreground"
+        >
+          ← Back
+        </button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1 bg-card/90 backdrop-blur-sm rounded-full px-3 py-2 border shadow-sm text-sm font-medium">
+            <Button variant="ghost" size="sm" className="gap-1 text-sm">
               {currentLang.short}
               <ChevronDown className="w-4 h-4" />
-            </button>
+            </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[150px]">
+          <DropdownMenuContent align="end" className="w-48">
             {languages.map((lang) => (
               <DropdownMenuItem
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
                 className={cn(
-                  'cursor-pointer',
-                  language === lang.code && 'bg-primary/10 text-primary'
+                  "cursor-pointer",
+                  language === lang.code && "bg-primary/10 text-primary"
                 )}
               >
-                <span className="mr-2">{lang.short}</span>
-                {lang.label}
+                <span className="flex-1">{lang.label}</span>
+                {language === lang.code && (
+                  <span className="text-primary">✓</span>
+                )}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Header */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-24 h-24 mb-4 animate-fade-in">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+        {/* Logo & Title */}
+        <div className="text-center mb-8">
           <img 
             src={agrogenisLogo} 
-            alt="AgroGenius AI Logo" 
-            className="w-full h-full object-contain drop-shadow-lg"
+            alt="AgroGenius AI" 
+            className="w-20 h-20 mx-auto mb-4 rounded-2xl shadow-lg"
           />
+          <h1 className="text-2xl font-bold text-foreground mb-1">{text.title}</h1>
+          <p className="text-sm text-muted-foreground">{text.subtitle}</p>
         </div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">{text.title}</h1>
-        <p className="text-muted-foreground text-center">
-          {text.subtitle}
-        </p>
-      </div>
 
-      {/* Login Form */}
-      <div className="bg-card rounded-t-3xl p-6 shadow-lg animate-slide-up">
-        {/* Guest Login Button - Prominent at top */}
-        <Button 
-          type="button"
-          variant="outline"
-          onClick={handleGuestLogin}
-          className="w-full h-14 text-lg rounded-xl gap-2 mb-4 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5"
-        >
-          <User className="w-5 h-5" />
-          {text.continueAsGuest}
-        </Button>
+        {/* Location Detection Indicator */}
+        {isDetectingLocation && (
+          <div className="w-full max-w-sm mb-4 p-3 bg-primary/5 rounded-xl flex items-center gap-3">
+            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+            <span className="text-sm text-foreground">{text.detectingLocation}</span>
+          </div>
+        )}
+
+        {/* Guest Login Button */}
+        <div className="w-full max-w-sm mb-6">
+          <Button
+            variant="outline"
+            className="w-full py-6 text-base rounded-xl border-2 border-primary/30 bg-primary/5"
+            onClick={handleGuestLogin}
+          >
+            <User className="w-5 h-5 mr-2" />
+            {text.continueAsGuest}
+          </Button>
+        </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-3 my-4">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-sm text-muted-foreground">{text.orLoginWith}</span>
-          <div className="flex-1 h-px bg-border" />
+        <div className="w-full max-w-sm flex items-center gap-4 mb-6">
+          <div className="flex-1 h-px bg-border"></div>
+          <span className="text-xs text-muted-foreground">{text.orLoginWith}</span>
+          <div className="flex-1 h-px bg-border"></div>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4 text-center">
-          {text.loginTitle}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Full Name Input */}
+        {/* Login Form */}
+        <div className="w-full max-w-sm space-y-4">
+          {/* Full Name */}
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
-              <User className="w-5 h-5" />
-            </div>
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="text"
               placeholder={text.fullName}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="pl-12 h-14 text-lg rounded-xl"
-              maxLength={50}
+              className="pl-12 py-6 text-base rounded-xl border-2 focus:border-primary"
             />
           </div>
 
-          {/* Phone Number Input */}
+          {/* Location */}
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-muted-foreground">
-              <Phone className="w-5 h-5" />
-              <span className="text-sm font-medium">+91</span>
-            </div>
-            <Input
-              type="tel"
-              placeholder={text.phoneNumber}
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-              className="pl-20 h-14 text-lg rounded-xl"
-              maxLength={10}
-            />
-          </div>
-
-          {/* Location Input with GPS Button */}
-          <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-muted-foreground">
-              <MapPin className="w-5 h-5" />
-            </div>
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="text"
               placeholder={text.locationPlaceholder}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="pl-12 pr-14 h-14 text-lg rounded-xl"
-              maxLength={50}
+              className="pl-12 py-6 text-base rounded-xl border-2 focus:border-primary"
             />
             <button
               type="button"
-              onClick={handleDetectLocation}
-              disabled={gpsLoading}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors disabled:opacity-50"
+              onClick={handleAllowLocation}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-primary rounded-lg"
             >
-              {gpsLoading ? (
-                <Loader2 className="w-5 h-5 text-primary animate-spin" />
-              ) : (
-                <Navigation className="w-5 h-5 text-primary" />
-              )}
+              <Navigation className="w-5 h-5" />
             </button>
           </div>
 
-          {error && <p className="text-destructive text-sm">{error}</p>}
-          <Button 
-            type="submit"
-            className="w-full h-14 text-lg rounded-xl gap-2"
-            disabled={phone.length !== 10 || !fullName.trim() || !location.trim()}
+          {/* Phone Number */}
+          <div className="relative">
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <span className="absolute left-12 top-1/2 -translate-y-1/2 text-muted-foreground">+91</span>
+            <Input
+              type="tel"
+              placeholder={text.phoneNumber}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              className="pl-24 py-6 text-base rounded-xl border-2 focus:border-primary"
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <p className="text-destructive text-sm text-center">{error}</p>
+          )}
+
+          {/* Submit Button */}
+          <Button
+            className="w-full py-6 text-base rounded-xl shadow-lg"
+            onClick={handleSubmit}
           >
             {text.sendOtp}
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-        </form>
 
-        <p className="text-xs text-muted-foreground text-center mt-6">
-          {text.terms}
-        </p>
+          {/* Terms */}
+          <p className="text-xs text-center text-muted-foreground mt-4">
+            {text.terms}
+          </p>
+        </div>
       </div>
 
       {/* Location Permission Dialog */}
       <Dialog open={showLocationDialog} onOpenChange={setShowLocationDialog}>
-        <DialogContent className="max-w-[340px] rounded-2xl">
+        <DialogContent className="max-w-sm mx-4 rounded-2xl">
           <DialogHeader className="text-center">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
               <MapPinned className="w-8 h-8 text-primary" />
             </div>
             <DialogTitle className="text-xl">{text.locationPermission}</DialogTitle>
-            <DialogDescription className="text-sm mt-2">
+            <DialogDescription className="text-sm">
               {text.locationPermissionDesc}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-4">
             <Button 
-              onClick={handleAllowLocation} 
-              className="w-full h-12 rounded-xl gap-2"
+              className="w-full py-5 rounded-xl"
+              onClick={handleAllowLocation}
             >
-              <Navigation className="w-5 h-5" />
+              <Navigation className="w-5 h-5 mr-2" />
               {text.allowLocation}
             </Button>
             <Button 
-              onClick={handleManualEntry} 
-              variant="outline" 
-              className="w-full h-12 rounded-xl"
+              variant="outline"
+              className="w-full py-5 rounded-xl"
+              onClick={handleManualEntry}
             >
               {text.manualEntry}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Location Detection Overlay */}
-      {isDetectingLocation && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-card rounded-2xl p-6 text-center shadow-lg">
-            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto mb-3" />
-            <p className="text-sm font-medium">{text.detectingLocation}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
