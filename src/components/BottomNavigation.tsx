@@ -1,13 +1,13 @@
-import { Home, ShoppingBag, TrendingUp, MessageCircle, User } from 'lucide-react';
+import { Home, ShoppingBag, TrendingUp, Bot, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { icon: Home, label: 'Home', path: '/home' },
-  { icon: ShoppingBag, label: 'Shop', path: '/shop' },
-  { icon: TrendingUp, label: 'Market', path: '/market' },
-  { icon: MessageCircle, label: 'Ask AI', path: '/ask-ai' },
-  { icon: User, label: 'Profile', path: '/profile' },
+  { icon: Home, label: 'Home', path: '/app' },
+  { icon: ShoppingBag, label: 'Shop', path: '/app/shop' },
+  { icon: TrendingUp, label: 'Market', path: '/app/market' },
+  { icon: Bot, label: 'Ask AI', path: '/app/ask-ai' },
+  { icon: User, label: 'Profile', path: '/app/profile' },
 ];
 
 const BottomNavigation = () => {
@@ -26,14 +26,14 @@ const BottomNavigation = () => {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                'flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-200',
+                'flex flex-col items-center justify-center w-full h-full gap-1 transition-colors',
                 isActive 
                   ? 'text-primary' 
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground'
               )}
             >
               <div className={cn(
-                'p-1.5 rounded-xl transition-all duration-200',
+                'p-1.5 rounded-xl',
                 isActive && 'bg-primary/10'
               )}>
                 <Icon className={cn('w-5 h-5', isActive && 'stroke-[2.5]')} />

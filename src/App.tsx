@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CropRecommendation from "./pages/CropRecommendation";
@@ -27,43 +28,57 @@ const queryClient = new QueryClient();
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
 };
 
-// Public route - redirects to home if already authenticated
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+// Login route - redirects to app if already authenticated
+const LoginRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   if (isAuthenticated) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/app" replace />;
   }
   return <>{children}</>;
 };
 
 const AppRoutes = () => (
   <Routes>
-    {/* Public route - Login */}
-    <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
+    {/* Public routes */}
+    <Route path="/" element={<LandingPage />} />
+    <Route path="/login" element={<LoginRoute><Login /></LoginRoute>} />
     
-    {/* Protected routes with bottom navigation */}
-    <Route path="/home" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
-    <Route path="/shop" element={<ProtectedRoute><AppLayout><Shop /></AppLayout></ProtectedRoute>} />
-    <Route path="/market" element={<ProtectedRoute><AppLayout><Market /></AppLayout></ProtectedRoute>} />
-    <Route path="/ask-ai" element={<ProtectedRoute><AppLayout><AskAI /></AppLayout></ProtectedRoute>} />
-    <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
+    {/* Protected app routes with bottom navigation */}
+    <Route path="/app" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
+    <Route path="/app/shop" element={<ProtectedRoute><AppLayout><Shop /></AppLayout></ProtectedRoute>} />
+    <Route path="/app/market" element={<ProtectedRoute><AppLayout><Market /></AppLayout></ProtectedRoute>} />
+    <Route path="/app/ask-ai" element={<ProtectedRoute><AppLayout><AskAI /></AppLayout></ProtectedRoute>} />
+    <Route path="/app/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
     
-    {/* Protected routes without bottom navigation */}
-    <Route path="/scan" element={<ProtectedRoute><CropScanner /></ProtectedRoute>} />
-    <Route path="/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
-    <Route path="/soil" element={<ProtectedRoute><SoilHealth /></ProtectedRoute>} />
-    <Route path="/crop-recommendation" element={<ProtectedRoute><CropRecommendation /></ProtectedRoute>} />
-    <Route path="/gov-schemes" element={<ProtectedRoute><GovSchemes /></ProtectedRoute>} />
-    <Route path="/parali" element={<ProtectedRoute><ParaliManagement /></ProtectedRoute>} />
-    <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+    {/* Protected app routes without bottom navigation */}
+    <Route path="/app/scan" element={<ProtectedRoute><CropScanner /></ProtectedRoute>} />
+    <Route path="/app/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
+    <Route path="/app/soil" element={<ProtectedRoute><SoilHealth /></ProtectedRoute>} />
+    <Route path="/app/crop-recommendation" element={<ProtectedRoute><CropRecommendation /></ProtectedRoute>} />
+    <Route path="/app/gov-schemes" element={<ProtectedRoute><GovSchemes /></ProtectedRoute>} />
+    <Route path="/app/parali" element={<ProtectedRoute><ParaliManagement /></ProtectedRoute>} />
+    <Route path="/app/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+    <Route path="/app/launching-soon" element={<ProtectedRoute><LaunchingSoon /></ProtectedRoute>} />
     
-    {/* Launching Soon */}
-    <Route path="/launching-soon" element={<ProtectedRoute><LaunchingSoon /></ProtectedRoute>} />
+    {/* Legacy route redirects for compatibility */}
+    <Route path="/home" element={<Navigate to="/app" replace />} />
+    <Route path="/shop" element={<Navigate to="/app/shop" replace />} />
+    <Route path="/market" element={<Navigate to="/app/market" replace />} />
+    <Route path="/ask-ai" element={<Navigate to="/app/ask-ai" replace />} />
+    <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+    <Route path="/scan" element={<Navigate to="/app/scan" replace />} />
+    <Route path="/weather" element={<Navigate to="/app/weather" replace />} />
+    <Route path="/soil" element={<Navigate to="/app/soil" replace />} />
+    <Route path="/crop-recommendation" element={<Navigate to="/app/crop-recommendation" replace />} />
+    <Route path="/gov-schemes" element={<Navigate to="/app/gov-schemes" replace />} />
+    <Route path="/parali" element={<Navigate to="/app/parali" replace />} />
+    <Route path="/pricing" element={<Navigate to="/app/pricing" replace />} />
+    <Route path="/launching-soon" element={<Navigate to="/app/launching-soon" replace />} />
     
     {/* Catch-all */}
     <Route path="*" element={<NotFound />} />
