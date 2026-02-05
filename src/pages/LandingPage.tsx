@@ -244,7 +244,7 @@ const LandingPage = () => {
                </p>
                <Button 
                  variant="outline"
-                 onClick={() => window.location.href = 'mailto:careers@agrogeniusai.com'}
+                 onClick={() => window.location.href = 'mailto:agrogeniusai@gmail.com'}
                  className="rounded-xl"
                >
                  <Mail className="w-4 h-4 mr-2" />

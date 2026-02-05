@@ -20,6 +20,7 @@ import ParaliManagement from "./pages/ParaliManagement";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import LaunchingSoon from "./pages/LaunchingSoon";
+ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const AppRoutes = () => (
     {/* Public routes */}
     <Route path="/" element={<LandingPage />} />
     <Route path="/login" element={<LoginRoute><Login /></LoginRoute>} />
+     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
     
     {/* Protected app routes with bottom navigation */}
     <Route path="/app" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
