@@ -273,10 +273,10 @@ const LandingPage = () => {
                  </div>
                  <h3 className="font-semibold text-foreground mb-2">Email</h3>
                  <a 
-                   href="mailto:hello@agrogeniusai.com" 
+                   href="mailto:agrogeniusai@gmail.com" 
                    className="text-sm text-primary hover:underline"
                  >
-                   hello@agrogeniusai.com
+                   agrogeniusai@gmail.com
                  </a>
                </CardContent>
              </Card>
