@@ -243,12 +243,12 @@ const LandingPage = () => {
                  we'd love to hear from you.
                </p>
                <Button 
-                 variant="outline"
-                 onClick={() => window.location.href = 'mailto:agrogeniusai@gmail.com'}
+                 variant="default"
+                 onClick={() => window.open('https://forms.gle/cbdNRcAFcmNu7XSp8', '_blank')}
                  className="rounded-xl"
                >
-                 <Mail className="w-4 h-4 mr-2" />
-                 Send Your Resume
+                 <ArrowRight className="w-4 h-4 mr-2" />
+                 Apply Now
                </Button>
              </CardContent>
            </Card>
