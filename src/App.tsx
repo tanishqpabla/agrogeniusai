@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import LaunchingSoon from "./pages/LaunchingSoon";
  import PrivacyPolicy from "./pages/PrivacyPolicy";
 import AppLayout from "./components/AppLayout";
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +103,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AppWithAuth />
+      <Analytics />
     </TooltipProvider>
   </QueryClientProvider>
 );
