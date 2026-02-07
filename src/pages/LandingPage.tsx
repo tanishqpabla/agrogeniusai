@@ -128,7 +128,33 @@ const LandingPage = () => {
             Comprehensive tools designed for Indian farmers, available in multiple languages
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {/* Mobile: horizontal snap-scroll carousel */}
+          <div className="md:hidden overflow-x-auto scroll-smooth snap-x snap-mandatory flex gap-4 px-2 py-2 no-scrollbar">
+            {features.map((feature) => {
+              const Icon = feature.icon;
+              return (
+                <Card 
+                  key={feature.title} 
+                  className="min-w-[280px] snap-center border-0 shadow-md bg-card flex-shrink-0"
+                >
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Desktop: grid layout */}
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
