@@ -1,1 +1,4 @@
 project_id = "mpcjkjpxrrygzexhjonb"
+
+[functions.get-mandi-prices]
+verify_jwt = false
