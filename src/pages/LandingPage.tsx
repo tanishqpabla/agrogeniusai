@@ -52,10 +52,10 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/app')}
               className="text-base px-8 py-6 rounded-xl shadow-lg"
             >
-              Sign In
+              Use the App
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <Button
@@ -83,7 +83,7 @@ const LandingPage = () => {
           </p>
           <Button
             size="lg"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/app')}
             className="text-base px-8 py-6 rounded-xl shadow-lg"
           >
             Get Started Free
@@ -107,7 +107,7 @@ const LandingPage = () => {
           </p>
           <Button
             size="lg"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/app')}
             className="text-base px-8 py-6 rounded-xl shadow-lg"
           >
             Get Started Free
