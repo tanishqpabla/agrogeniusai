@@ -6,6 +6,7 @@ import {
   TrendingUp,
   Landmark,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import FeatureCard from './FeatureCard';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -14,36 +15,43 @@ const features = [
     icon: Leaf,
     title: 'Smart Crop Decisions',
     description: 'AI-powered recommendations for the best crops based on your soil, weather, and market conditions.',
+    path: '/app/crop-recommendation',
   },
   {
     icon: Flame,
     title: 'Parali Alternatives',
     description: 'Eco-friendly solutions to stubble burning - earn money while protecting the environment.',
+    path: '/app/parali',
   },
   {
     icon: Cloud,
     title: 'Weather & Soil Monitoring',
     description: 'Real-time weather forecasts and soil health insights tailored to your farm location.',
+    path: '/app/weather',
   },
   {
     icon: Bug,
     title: 'Pest & Disease Alerts',
     description: 'Early detection and treatment suggestions for crop diseases using AI-powered scanning.',
+    path: '/app/scan',
   },
   {
     icon: TrendingUp,
     title: 'Market Insights',
     description: 'Live mandi prices and market trends to help you sell at the best time.',
+    path: '/app/market',
   },
   {
     icon: Landmark,
     title: 'Government Schemes',
     description: 'Stay updated on subsidies, loans, and schemes like PM-KISAN for farmers.',
+    path: '/app/gov-schemes',
   },
 ];
 
 const FeaturesSection = () => {
   const sectionRef = useScrollReveal<HTMLElement>();
+  const navigate = useNavigate();
 
   return (
     <section id="features" className="px-4 py-12 md:py-16 bg-card/50" ref={sectionRef}>
@@ -61,6 +69,7 @@ const FeaturesSection = () => {
             <FeatureCard
               key={feature.title}
               {...feature}
+              onClick={() => navigate(feature.path)}
               className="min-w-[280px] snap-center flex-shrink-0"
             />
           ))}
@@ -69,7 +78,7 @@ const FeaturesSection = () => {
         {/* Desktop: grid layout */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature) => (
-            <FeatureCard key={feature.title} {...feature} />
+            <FeatureCard key={feature.title} {...feature} onClick={() => navigate(feature.path)} />
           ))}
         </div>
       </div>
