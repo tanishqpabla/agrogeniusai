@@ -26,11 +26,11 @@ import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 
-// Protected route wrapper - must be used inside AuthProvider
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+// Auto-guest route wrapper - auto-logs in as guest if not authenticated
+const AutoGuestRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, loginAsGuest } = useAuth();
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    loginAsGuest('en');
   }
   return <>{children}</>;
 };
@@ -51,22 +51,22 @@ const AppRoutes = () => (
     <Route path="/login" element={<LoginRoute><Login /></LoginRoute>} />
      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
     
-    {/* Protected app routes with bottom navigation */}
-    <Route path="/app" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
-    <Route path="/app/shop" element={<ProtectedRoute><AppLayout><Shop /></AppLayout></ProtectedRoute>} />
-    <Route path="/app/market" element={<ProtectedRoute><AppLayout><Market /></AppLayout></ProtectedRoute>} />
-    <Route path="/app/ask-ai" element={<ProtectedRoute><AppLayout><AskAI /></AppLayout></ProtectedRoute>} />
-    <Route path="/app/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
+    {/* App routes - auto guest login */}
+    <Route path="/app" element={<AutoGuestRoute><AppLayout><Home /></AppLayout></AutoGuestRoute>} />
+    <Route path="/app/shop" element={<AutoGuestRoute><AppLayout><Shop /></AppLayout></AutoGuestRoute>} />
+    <Route path="/app/market" element={<AutoGuestRoute><AppLayout><Market /></AppLayout></AutoGuestRoute>} />
+    <Route path="/app/ask-ai" element={<AutoGuestRoute><AppLayout><AskAI /></AppLayout></AutoGuestRoute>} />
+    <Route path="/app/profile" element={<AutoGuestRoute><AppLayout><Profile /></AppLayout></AutoGuestRoute>} />
     
-    {/* Protected app routes without bottom navigation */}
-    <Route path="/app/scan" element={<ProtectedRoute><CropScanner /></ProtectedRoute>} />
-    <Route path="/app/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
-    <Route path="/app/soil" element={<ProtectedRoute><SoilHealth /></ProtectedRoute>} />
-    <Route path="/app/crop-recommendation" element={<ProtectedRoute><CropRecommendation /></ProtectedRoute>} />
-    <Route path="/app/gov-schemes" element={<ProtectedRoute><GovSchemes /></ProtectedRoute>} />
-    <Route path="/app/parali" element={<ProtectedRoute><ParaliManagement /></ProtectedRoute>} />
-    <Route path="/app/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
-    <Route path="/app/launching-soon" element={<ProtectedRoute><LaunchingSoon /></ProtectedRoute>} />
+    {/* App routes without bottom navigation */}
+    <Route path="/app/scan" element={<AutoGuestRoute><CropScanner /></AutoGuestRoute>} />
+    <Route path="/app/weather" element={<AutoGuestRoute><Weather /></AutoGuestRoute>} />
+    <Route path="/app/soil" element={<AutoGuestRoute><SoilHealth /></AutoGuestRoute>} />
+    <Route path="/app/crop-recommendation" element={<AutoGuestRoute><CropRecommendation /></AutoGuestRoute>} />
+    <Route path="/app/gov-schemes" element={<AutoGuestRoute><GovSchemes /></AutoGuestRoute>} />
+    <Route path="/app/parali" element={<AutoGuestRoute><ParaliManagement /></AutoGuestRoute>} />
+    <Route path="/app/pricing" element={<AutoGuestRoute><Pricing /></AutoGuestRoute>} />
+    <Route path="/app/launching-soon" element={<AutoGuestRoute><LaunchingSoon /></AutoGuestRoute>} />
     
     {/* Legacy route redirects for compatibility */}
     <Route path="/home" element={<Navigate to="/app" replace />} />

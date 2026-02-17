@@ -13,7 +13,9 @@ import {
   Star,
   Pencil,
   Check,
-  Crown
+  Crown,
+  Navigation,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -27,6 +29,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import PremiumBanner from '@/components/PremiumBanner';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 const languages: { code: Language; label: string }[] = [
   { code: 'en', label: 'English' },
@@ -202,12 +205,19 @@ const translations: Record<Language, {
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, logout, updateProfile, updateLanguage } = useAuth();
+  const { user, isGuest, login, logout, updateProfile, updateLanguage } = useAuth();
   const [notifications, setNotifications] = useState(true);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState(false);
   const [editName, setEditName] = useState(user?.name || '');
   const [editLocation, setEditLocation] = useState(user?.location || '');
+
+  // Sign-up form state for guests
+  const [signupName, setSignupName] = useState('');
+  const [signupPhone, setSignupPhone] = useState('');
+  const [signupLocation, setSignupLocation] = useState('');
+  const [signupError, setSignupError] = useState('');
+  const { loading: gpsLoading, getCurrentLocation } = useGeolocation();
 
   const currentLang = user?.language || 'en';
   const text = translations[currentLang];
@@ -230,6 +240,33 @@ const Profile = () => {
     setIsLanguageDialogOpen(false);
   };
 
+  const handleSignup = () => {
+    setSignupError('');
+    if (!signupName.trim()) {
+      setSignupError('Please enter your name');
+      return;
+    }
+    if (!signupPhone.trim() || signupPhone.length !== 10) {
+      setSignupError('Please enter a valid 10-digit phone number');
+      return;
+    }
+    if (!signupLocation.trim()) {
+      setSignupError('Please enter your location');
+      return;
+    }
+    login(signupPhone.trim(), signupName.trim(), signupLocation.trim(), currentLang);
+  };
+
+  const handleDetectLocation = async () => {
+    const result = await getCurrentLocation();
+    if (result?.city) {
+      const loc = result.state && result.state !== 'Unknown State' 
+        ? `${result.city}, ${result.state}` 
+        : result.city;
+      setSignupLocation(loc);
+    }
+  };
+
   const menuItems = [
     { icon: Bell, label: text.notifications, action: 'toggle', value: notifications, onChange: setNotifications },
     { icon: Globe, label: text.language, value: currentLangLabel, action: 'language' },
@@ -238,6 +275,140 @@ const Profile = () => {
     { icon: Star, label: text.rateApp, action: 'launching-soon' },
   ];
 
+  // Guest view — show sign-up form
+  if (isGuest) {
+    return (
+      <div className="min-h-screen bg-background pb-24">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-primary to-agro-leaf p-6 pb-20 rounded-b-3xl">
+          <h1 className="text-xl font-bold text-primary-foreground mb-1">Create Account</h1>
+          <p className="text-primary-foreground/80 text-sm">Sign up to save your data & get personalized advice</p>
+        </div>
+
+        <div className="px-4 -mt-14 space-y-4">
+          {/* Sign-up Card */}
+          <div className="bg-card rounded-2xl p-6 shadow-lg border">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center">
+                <User className="w-7 h-7 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Welcome, Guest!</h2>
+                <p className="text-sm text-muted-foreground">Create an account to unlock all features</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Full Name</label>
+                <Input
+                  value={signupName}
+                  onChange={(e) => setSignupName(e.target.value)}
+                  placeholder="Enter your full name"
+                  className="h-12 rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Phone Number</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground bg-muted px-3 py-3 rounded-xl">+91</span>
+                  <Input
+                    value={signupPhone}
+                    onChange={(e) => setSignupPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="Enter phone number"
+                    className="h-12 rounded-xl flex-1"
+                    type="tel"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Location</label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={signupLocation}
+                    onChange={(e) => setSignupLocation(e.target.value)}
+                    placeholder="Enter your location"
+                    className="h-12 rounded-xl flex-1"
+                  />
+                  <button
+                    onClick={handleDetectLocation}
+                    disabled={gpsLoading}
+                    className="h-12 px-3 bg-muted rounded-xl flex items-center justify-center text-primary hover:bg-muted/80 transition-colors disabled:opacity-50"
+                  >
+                    {gpsLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Navigation className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {signupError && (
+                <p className="text-sm text-destructive">{signupError}</p>
+              )}
+
+              <Button
+                onClick={handleSignup}
+                className="w-full h-12 rounded-xl text-base mt-2"
+              >
+                Create Account
+              </Button>
+            </div>
+          </div>
+
+          {/* Language selector for guests */}
+          <div className="bg-card rounded-2xl border overflow-hidden">
+            <div
+              className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => setIsLanguageDialogOpen(true)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <span className="font-medium text-foreground">{text.language}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span className="text-sm">{currentLangLabel}</span>
+                <ChevronRight className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+
+          {/* App Info */}
+          <div className="bg-muted/50 rounded-2xl p-4 text-center">
+            <p className="text-sm text-muted-foreground">AgroGenius AI v1.0.0</p>
+            <p className="text-xs text-muted-foreground mt-1">{text.madeWith}</p>
+          </div>
+        </div>
+
+        {/* Language Selection Dialog */}
+        <Dialog open={isLanguageDialogOpen} onOpenChange={setIsLanguageDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{text.selectLanguage}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => handleLanguageChange(lang.code)}
+                  className={cn(
+                    'w-full p-4 rounded-xl flex items-center justify-between border transition-colors',
+                    currentLang === lang.code 
+                      ? 'bg-primary/10 border-primary' 
+                      : 'hover:bg-muted'
+                  )}
+                >
+                  <span className="font-medium">{lang.label}</span>
+                  {currentLang === lang.code && <Check className="w-5 h-5 text-primary" />}
+                </button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
+  // Logged-in user view
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -277,6 +448,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
       {/* Menu Items */}
       <div className="px-4 mt-6">
         <div className="bg-card rounded-2xl border overflow-hidden">
