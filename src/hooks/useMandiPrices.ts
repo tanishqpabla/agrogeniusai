@@ -36,7 +36,7 @@ export const DISTRICTS: Record<string, string[]> = {
   'Haryana': ['All', 'Hisar', 'Karnal', 'Ambala', 'Sirsa', 'Rohtak', 'Sonipat', 'Panipat', 'Kurukshetra', 'Jind', 'Fatehabad', 'Bhiwani', 'Rewari'],
   'Punjab': ['All', 'Ludhiana', 'Amritsar', 'Patiala', 'Bathinda', 'Jalandhar', 'Sangrur', 'Moga'],
   'Uttar Pradesh': ['All', 'Lucknow', 'Agra', 'Meerut', 'Varanasi', 'Kanpur', 'Allahabad', 'Bareilly'],
-  'Madhya Pradesh': ['All', 'Indore', 'Bhopal', 'Jabalpur', 'Ujjain', 'Gwalior'],
+  'Madhya Pradesh': ['All', 'Indore', 'Dewas', 'Ujjain', 'Dhar', 'Ratlam', 'Khargone', 'Khandwa', 'Shajapur', 'Mandsaur', 'Sehore', 'Bhopal', 'Jabalpur', 'Gwalior'],
   'Rajasthan': ['All', 'Jaipur', 'Jodhpur', 'Kota', 'Udaipur', 'Bikaner', 'Alwar'],
   'Maharashtra': ['All', 'Pune', 'Nashik', 'Nagpur', 'Ahmednagar', 'Solapur'],
   'Gujarat': ['All', 'Ahmedabad', 'Rajkot', 'Surat', 'Junagadh', 'Mehsana'],
