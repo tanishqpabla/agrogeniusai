@@ -7,9 +7,14 @@ import { useWeather, getWeatherIcon } from '@/hooks/useWeather';
 import PageHeader from '@/components/PageHeader';
 
 const districts = [
+  // Haryana
   'Hisar', 'Karnal', 'Panipat', 'Rohtak', 'Ambala', 
   'Sirsa', 'Fatehabad', 'Jind', 'Kaithal', 'Kurukshetra',
-  'Sonipat', 'Yamunanagar', 'Panchkula', 'Faridabad', 'Gurugram'
+  'Sonipat', 'Yamunanagar', 'Panchkula', 'Faridabad', 'Gurugram',
+  // Madhya Pradesh (Indore & nearby)
+  'Indore', 'Dewas', 'Ujjain', 'Dhar', 'Ratlam',
+  'Khargone', 'Khandwa', 'Shajapur', 'Mandsaur', 'Sehore',
+  'Bhopal', 'Mhow', 'Sanwer', 'Depalpur', 'Burhanpur',
 ];
 
 const pageTranslations: Record<Language, {
